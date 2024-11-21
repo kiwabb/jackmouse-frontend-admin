@@ -46,10 +46,41 @@ export default [
     ],
   },
   {
-    name: 'list.table-list',
-    icon: 'table',
+    path: '/system',
+    name: 'system',
+    icon: 'crown',
+    access: 'canAdmin',
+    routes: [
+      {
+        path: '/system',
+        redirect: '/system',
+      },
+      {
+        path: '/system/user',
+        name: 'user',
+        component: './system/User',
+      },
+    ],
+  },
+  {
     path: '/list',
-    component: './TableList',
+    name: 'list',
+    icon: 'table',
+    access: 'canAdmin',
+    routes: [
+      {
+        name: 'table-list',
+        icon: 'table',
+        path: '/list/table',
+        component: './TableList',
+      },
+      {
+        name: 'product-list',
+        icon: 'table',
+        path: '/list/product-list',
+        component: './ProductList',
+      },
+    ],
   },
   {
     path: '/',
