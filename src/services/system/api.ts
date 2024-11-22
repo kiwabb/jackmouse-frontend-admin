@@ -22,7 +22,7 @@ export async function rule(
   });
 }
 // ---------------------------------
-/** 获取规则列表 GET /system/user */
+/** 获取用户列表 GET /system/user */
 export async function user(
   params: {
     // query
@@ -40,12 +40,47 @@ export async function user(
     },
     ...(options || {}),
   });
-  console.log('21312312', data);
+
   const result: API.UserList = {
     data: data.data.records,
     total: data.data.totalRow,
     success: true,
   };
-  console.log('21312312', result);
+
   return result;
+}
+// --------------------
+
+/** 更新规则 PUT /api/rule */
+export async function updateUser(options?: { [key: string]: any }) {
+  return request<API.RuleListItem>('/server/api/basic-system/sysUser/page', {
+    method: 'POST',
+    data: {
+      method: 'update',
+      ...(options || {}),
+    },
+  });
+}
+
+/** 新建规则 POST /api/rule */
+export async function addRule(options?: { [key: string]: any }) {
+  return request<API.RuleListItem>('/server/api/user', {
+    method: 'POST',
+
+    data: {
+      method: 'post',
+      ...(options || {}),
+    },
+  });
+}
+
+/** 删除规则 DELETE /api/rule */
+export async function removeUser(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/user', {
+    method: 'POST',
+    data: {
+      method: 'delete',
+      ...(options || {}),
+    },
+  });
 }

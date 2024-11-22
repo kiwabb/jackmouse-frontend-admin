@@ -30,6 +30,8 @@ export default {
   'pages.admin.subPage.alertMessage': 'umi ui 现已发布，欢迎使用 npm run ui 启动体验。',
   'pages.searchTable.createForm.newRule': '新建规则',
   'pages.searchTable.updateForm.ruleConfig': '规则配置',
+  'pages.searchTable.updateForm.userConfig': '用户编辑',
+
   'pages.searchTable.updateForm.basicConfig': '基本信息',
   'pages.searchTable.system.user.username': '用户名',
   'pages.searchTable.system.user.nickname': '昵称',
