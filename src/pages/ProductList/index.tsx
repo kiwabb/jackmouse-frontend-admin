@@ -314,6 +314,7 @@ const TableList: React.FC = () => {
           </Button>
         </FooterToolbar>
       )}
+
       <ModalForm
         title={intl.formatMessage({
           id: 'pages.searchTable.createForm.newRule',

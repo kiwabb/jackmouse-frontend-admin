@@ -4,8 +4,7 @@
 类型data结构校验：services/system/typing: UserListItem、UserList
 */
 
-// import {addRule, removeRule, updateRule} from '@/services/ant-design-pro/api';
-import { addRule, removeUser, user } from '@/services/system/api';
+import { addUser, removeUser, user } from '@/services/system/api';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -31,7 +30,7 @@ import { updateUser } from '@/services/system/api';
 const handleAdd = async (fields: API.UserListItem) => {
   const hide = message.loading('正在添加');
   try {
-    await addRule({ ...fields });
+    await addUser({ ...fields });
     hide();
     message.success('Added successfully');
     return true;
@@ -53,6 +52,11 @@ const handleUpdate = async (fields: FormValueType) => {
   try {
     await updateUser({
       username: fields.username,
+      nickname: fields.nickname,
+      phone: fields.phone,
+      sex: fields.sex,
+      avatar: fields.avatar,
+      email: fields.email,
     });
     hide();
 
@@ -118,7 +122,7 @@ const TableList: React.FC = () => {
         <FormattedMessage id="pages.searchTable.system.user.username" defaultMessage="user name" />
       ),
       dataIndex: 'username',
-      tip: 'The rule name is the unique key',
+      tip: 'The user name is the unique key',
       render: (dom, entity) => {
         return (
           <a
@@ -358,6 +362,8 @@ const TableList: React.FC = () => {
           </Button>
         </FooterToolbar>
       )}
+
+      {/*-----新增按钮---------*/}
       <ModalForm
         title={intl.formatMessage({
           id: 'pages.searchTable.createForm.newUser',
@@ -377,6 +383,7 @@ const TableList: React.FC = () => {
         }}
       >
         <ProFormText
+          width="md"
           name="username"
           label="用户名称"
           tooltip="最长为 24 位"
@@ -392,7 +399,7 @@ const TableList: React.FC = () => {
 
         <ProFormText width="md" name="type" label="类型" placeholder="请输入类型" />
       </ModalForm>
-
+      {/*--------修改更新------------*/}
       <UpdateForm
         onSubmit={async (value) => {
           const success = await handleUpdate(value);
@@ -400,7 +407,7 @@ const TableList: React.FC = () => {
             handleUpdateModalOpen(false);
             setCurrentRow(undefined);
             if (actionRef.current) {
-              actionRef.current.reload();
+              await actionRef.current.reload();
             }
           }
         }}
