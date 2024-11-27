@@ -39,6 +39,11 @@ export default [
         redirect: '/admin/sub-page',
       },
       {
+        path: '/admin/first-page',
+        name: 'sub-page',
+        component: './Admin',
+      },
+      {
         path: '/admin/sub-page',
         name: 'sub-page',
         component: './Admin',
@@ -60,11 +65,11 @@ export default [
         name: 'user',
         component: './system/User',
       },
-      {
-        path: '/system/category',
-        name: 'category',
-        component: './system/Category',
-      },
+      // {
+      //   path: '/system/category',
+      //   name: 'category',
+      //   component: './system/Category',
+      // },
     ],
   },
   {
@@ -78,12 +83,6 @@ export default [
         icon: 'table',
         path: '/list/table',
         component: './TableList',
-      },
-      {
-        name: 'product-list',
-        icon: 'table',
-        path: '/list/product-list',
-        component: './ProductList',
       },
     ],
   },

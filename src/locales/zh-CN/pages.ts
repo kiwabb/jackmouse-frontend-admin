@@ -41,7 +41,7 @@ export default {
   'pages.searchTable.system.user.sex': '性别',
   'pages.searchTable.system.user.sex.boy': '男',
   'pages.searchTable.system.user.sex.girl': '女',
-  'pages.searchTable.system.user.enable': '是否可用',
+  'pages.searchTable.system.user.enable': '状态',
   'pages.searchTable.system.user.type': '类型',
   'pages.searchTable.createForm.newUser': '新用户',
   'pages.searchTable.createForm.updateUser': '编辑用户',
@@ -82,7 +82,7 @@ export default {
   'pages.searchTable.deletion': '删除',
 
   'pages.searchTable.subscribeAlert': '订阅警报',
-  'pages.searchTable.title': '查询表格111',
+  'pages.searchTable.title': '查询表格',
   'pages.searchTable.new': '新建',
   'pages.searchTable.chosen': '已选择',
   'pages.searchTable.item': '项',

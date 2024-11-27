@@ -33,7 +33,7 @@ export default {
   'menu.list.search-list.projects': '搜索列表（项目）',
   'menu.list.search-list.applications': '搜索列表（应用）',
 
-  'menu.system': '基础信息',
+  'menu.system': '系统管理',
   'menu.system.user': '用户列表',
 
   'menu.profile': '详情页',
