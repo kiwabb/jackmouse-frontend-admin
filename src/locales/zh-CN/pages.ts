@@ -4,7 +4,7 @@ export default {
   'pages.login.accountLogin.errorMessage': '错误的用户名和密码(admin/ant.design)',
   'pages.login.failure': '登录失败，请重试！',
   'pages.login.success': '登录成功！',
-  'pages.login.username.placeholder': '用户名: admin or user',
+  'pages.login.username.placeholder': '用户名: admin or User',
   'pages.login.username.required': '用户名是必填项！',
   'pages.login.password.placeholder': '密码: ant.design',
   'pages.login.password.required': '密码是必填项！',
@@ -39,7 +39,19 @@ export default {
   'pages.searchTable.system.user.phone': '电话',
   'pages.searchTable.system.user.email': '邮箱',
   'pages.searchTable.system.user.sex': '性别',
+  'pages.searchTable.system.user.sex.boy': '男',
+  'pages.searchTable.system.user.sex.girl': '女',
   'pages.searchTable.system.user.enable': '是否可用',
+  'pages.searchTable.system.user.type': '类型',
+  'pages.searchTable.createForm.newUser': '新用户',
+  'pages.searchTable.createForm.updateUser': '编辑用户',
+  // ----------------------------------------------------
+  'pages.searchTable.system.category.categoryLabel': '产品类别',
+  'pages.searchTable.system.category.categoryName': '产品名称',
+
+  'pages.searchTable.newCategory': '新建类别',
+
+  // ----------------------------------------------------
 
   'pages.searchTable.updateForm.ruleName.nameLabel': '规则名称',
   'pages.searchTable.updateForm.ruleName.nameRules': '请输入规则名称！',
@@ -65,6 +77,10 @@ export default {
   'pages.searchTable.exception': '请输入异常原因！',
   'pages.searchTable.titleOption': '操作',
   'pages.searchTable.config': '配置',
+  'pages.searchTable.edit': '编辑',
+  'pages.searchTable.batchDeletion': '批量删除',
+  'pages.searchTable.deletion': '删除',
+
   'pages.searchTable.subscribeAlert': '订阅警报',
   'pages.searchTable.title': '查询表格111',
   'pages.searchTable.new': '新建',
@@ -72,6 +88,6 @@ export default {
   'pages.searchTable.item': '项',
   'pages.searchTable.totalServiceCalls': '服务调用次数总计',
   'pages.searchTable.tenThousand': '万',
-  'pages.searchTable.batchDeletion': '批量删除',
+
   'pages.searchTable.batchApproval': '批量审批',
 };

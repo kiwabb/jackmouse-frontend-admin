@@ -6,7 +6,7 @@ declare namespace API {
     /**
      * 主键
      */
-    id?: number | null;
+    id?: number;
     /**
      * 头像
      */
@@ -15,7 +15,7 @@ declare namespace API {
     /**
      * 邮箱
      */
-    email?: null | string;
+    email?: number | string;
     /**
      * 是否可用
      */
@@ -39,11 +39,11 @@ declare namespace API {
     /**
      * 性别
      */
-    sex?: boolean | null;
+    sex?: number | string | null;
     /**
      * 用户类型
      */
-    type?: null | string;
+    type?: number | string | null;
     createBy?: number | null;
     createTime?: null | string;
     updateBy?: number | null;

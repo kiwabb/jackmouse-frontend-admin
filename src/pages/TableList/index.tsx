@@ -232,6 +232,7 @@ const TableList: React.FC = () => {
         >
           <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
         </a>,
+
         <a key="subscribeAlert" href="https://procomponents.ant.design/">
           <FormattedMessage
             id="pages.searchTable.subscribeAlert"
@@ -354,6 +355,7 @@ const TableList: React.FC = () => {
         />
         <ProFormTextArea width="md" name="desc" />
       </ModalForm>
+
       <UpdateForm
         onSubmit={async (value) => {
           const success = await handleUpdate(value);

@@ -35,7 +35,7 @@ describe('Login Page', () => {
       <TestBrowser
         historyRef={historyRef}
         location={{
-          pathname: '/user/login',
+          pathname: '/User/login',
         }}
       />,
     );
@@ -61,14 +61,14 @@ describe('Login Page', () => {
       <TestBrowser
         historyRef={historyRef}
         location={{
-          pathname: '/user/login',
+          pathname: '/User/login',
         }}
       />,
     );
 
     await rootContainer.findAllByText('Ant Design');
 
-    const userNameInput = await rootContainer.findByPlaceholderText('Username: admin or user');
+    const userNameInput = await rootContainer.findByPlaceholderText('Username: admin or User');
 
     act(() => {
       fireEvent.change(userNameInput, { target: { value: 'admin' } });

@@ -1,12 +1,17 @@
 /*
-调用接口结构： 调用接口-- services/system/api : user 、updateUser、addUser、removeUser
+调用接口结构： 调用接口-- services/system/api : User 、updateUser、addUser、removeUser
 具体接口地址：config/proxy
 类型data结构校验：services/system/typing: UserListItem、UserList
 */
 
-import { addUser, removeUser, user } from '@/services/system/api';
+import { addUser, removeUser, user } from '@/services/system/User/api';
 import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import {
+  ActionType,
+  ProColumns,
+  ProDescriptionsItemProps,
+  ProFormSelect,
+} from '@ant-design/pro-components';
 import {
   FooterToolbar,
   ModalForm,
@@ -16,11 +21,12 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, message } from 'antd';
+import { Button, Drawer, Form, message, Popconfirm } from 'antd';
 import React, { useRef, useState } from 'react';
-import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
-import { updateUser } from '@/services/system/api';
+// import type {FormValueType} from './components/UpdateForm';
+// import UpdateForm from './components/UpdateForm';
+import { updateUser } from '@/services/system/User/api';
+import { removeRule } from '@/services/ant-design-pro/api';
 
 /**
  * @en-US Add node
@@ -47,27 +53,27 @@ const handleAdd = async (fields: API.UserListItem) => {
  *
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
-  try {
-    await updateUser({
-      username: fields.username,
-      nickname: fields.nickname,
-      phone: fields.phone,
-      sex: fields.sex,
-      avatar: fields.avatar,
-      email: fields.email,
-    });
-    hide();
-
-    message.success('Configuration is successful');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Configuration failed, please try again!');
-    return false;
-  }
-};
+// const handleUpdate = async (fields: FormValueType) => {
+//   const hide = message.loading('Configuring');
+//   try {
+//     await updateUser({
+//       username: fields.username,
+//       nickname: fields.nickname,
+//       phone: fields.phone,
+//       sex: fields.sex,
+//       avatar: fields.avatar,
+//       email: fields.email,
+//     });
+//     hide();
+//
+//     message.success('Configuration is successful');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('Configuration failed, please try again!');
+//     return false;
+//   }
+// };
 
 /**
  *  Delete node
@@ -79,7 +85,7 @@ const handleRemove = async (selectedRows: API.UserListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeUser({
+    await removeRule({
       key: selectedRows.map((row) => row.id),
     });
     hide();
@@ -109,12 +115,43 @@ const TableList: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.UserListItem>();
   const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([]);
+  const [form] = Form.useForm();
 
+  const [confirmLoading, setConfirmLoading] = useState(false);
   /**
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
   const intl = useIntl();
+
+  const handleConfirmDelete = () => {
+    setConfirmLoading(true);
+    removeUser(currentRow?.id);
+    // setOpen(false);
+    setConfirmLoading(false);
+    actionRef.current?.reloadAndRest?.();
+  };
+
+  // 打开弹窗并传递当前记录
+  const handleConfirmEdit = (record: API.UserListItem) => {
+    form.setFieldsValue(record); // 设置表单初始值
+    handleUpdateModalOpen(true);
+    console.log(record);
+  };
+
+  // 保存修改
+  const handleSave = async (fields: API.UserListItem) => {
+    try {
+      await updateUser({ id: currentRow!.id, ...fields });
+      message.success('修改成功');
+      handleUpdateModalOpen(false);
+    } catch (error) {
+      console.error('Validation failed:', error);
+    }
+    actionRef.current?.reloadAndRest?.();
+    console.log(currentRow);
+    console.log(fields);
+  };
 
   const columns: ProColumns<API.UserListItem>[] = [
     {
@@ -122,7 +159,7 @@ const TableList: React.FC = () => {
         <FormattedMessage id="pages.searchTable.system.user.username" defaultMessage="user name" />
       ),
       dataIndex: 'username',
-      tip: 'The user name is the unique key',
+      tip: 'The User name is the unique key',
       render: (dom, entity) => {
         return (
           <a
@@ -136,7 +173,6 @@ const TableList: React.FC = () => {
         );
       },
     },
-
     {
       title: (
         <FormattedMessage id="pages.searchTable.system.user.nickname" defaultMessage="nickname" />
@@ -144,72 +180,24 @@ const TableList: React.FC = () => {
       dataIndex: 'nickname',
       sorter: true,
       hideInForm: true,
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.avatar" defaultMessage="avatar" />,
       dataIndex: 'avatar',
       sorter: true,
       hideInForm: false,
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.phone" defaultMessage="phone" />,
       dataIndex: 'phone',
       sorter: true,
       hideInForm: true,
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.email" defaultMessage="email" />,
       dataIndex: 'email',
       sorter: true,
       hideInForm: true,
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.sex" defaultMessage="sex" />,
@@ -219,80 +207,102 @@ const TableList: React.FC = () => {
       valueEnum: {
         0: {
           text: <FormattedMessage id="pages.searchTable.system.user.sex.boy" defaultMessage="男" />,
-          status: 'boy',
+          status: '男',
         },
         1: {
           text: (
             <FormattedMessage id="pages.searchTable.system.user.sex.girl" defaultMessage="女" />
           ),
-          status: 'girl',
+          status: '女',
         },
-      },
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
       },
     },
     {
       title: (
         <FormattedMessage id="pages.searchTable.system.user.enable" defaultMessage="是否可用" />
       ),
-      dataIndex: 'enable',
+      dataIndex: 'enabled',
       sorter: true,
       hideInForm: true,
       valueEnum: {
         0: {
-          text: <FormattedMessage id="pages.searchTable.system.user.able" defaultMessage="可用" />,
-          status: 'true',
-        },
-        1: {
           text: (
             <FormattedMessage id="pages.searchTable.system.user.unable" defaultMessage="不可用" />
           ),
-          status: 'false',
+          status: '不可用',
+        },
+        1: {
+          text: <FormattedMessage id="pages.searchTable.system.user.able" defaultMessage="可用" />,
+          status: '可用',
         },
       },
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
+    },
+    {
+      title: <FormattedMessage id="pages.searchTable.system.user.type" defaultMessage="类型" />,
+      dataIndex: 'type',
+      sorter: true,
+      hideInForm: true,
+      valueEnum: {
+        1: {
+          text: (
+            <FormattedMessage id="pages.searchTable.system.user.type1" defaultMessage="类型1" />
+          ),
+          status: '类型1',
+        },
+        2: {
+          text: (
+            <FormattedMessage id="pages.searchTable.system.user.type2" defaultMessage="类型2" />
+          ),
+          status: '类型2',
+        },
+        3: {
+          text: (
+            <FormattedMessage id="pages.searchTable.system.user.type3" defaultMessage="类型3" />
+          ),
+          status: '类型3',
+        },
       },
     },
+
+    //行末 操作，编辑和删除
     {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
+        // 编辑
         <a
-          key="config"
+          key={record.id}
           onClick={() => {
-            handleUpdateModalOpen(true);
             setCurrentRow(record);
+            handleConfirmEdit(record);
+            console.log(record);
           }}
         >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
+          <FormattedMessage id="pages.searchTable.edit" defaultMessage="edit" />
         </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.searchTable.subscribeAlert"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
+        <Popconfirm
+          onConfirm={handleConfirmDelete}
+          // onCancel={() => setOpen(false)}
+          key={record.id}
+          placement="topLeft"
+          title={'删除'}
+          // open={open}
+          description={'是否删除'}
+          okText="是"
+          cancelText="否"
+          okButtonProps={{ loading: confirmLoading }}
+        >
+          <a
+            key="id"
+            onClick={() => {
+              setCurrentRow(record);
+              // setOpen(true);
+            }}
+          >
+            <FormattedMessage id="pages.searchTable.deletion" defaultMessage="deletion" />
+          </a>
+        </Popconfirm>,
       ],
     },
   ];
@@ -306,7 +316,7 @@ const TableList: React.FC = () => {
         actionRef={actionRef}
         rowKey="key"
         search={{
-          labelWidth: 120,
+          labelWidth: 80,
         }} //查询框
         toolBarRender={() => [
           <Button
@@ -316,7 +326,9 @@ const TableList: React.FC = () => {
               handleModalOpen(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+            <PlusOutlined />
+            {/*新建*/}
+            <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]} //工具栏渲染
         request={user}
@@ -327,59 +339,145 @@ const TableList: React.FC = () => {
           },
         }}
       />
-
-      {selectedRowsState?.length > 0 && (
-        /*-----页尾----*/
-        <FooterToolbar
-          extra={
-            <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
-              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              {/*<FormattedMessage id="pages.searchTable.item"*/}
-              {/*                  defaultMessage="项"/>*/}
-              &nbsp;&nbsp;
-            </div>
-          }
-        >
-          {/*-----页尾按钮 批量删除，----*/}
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage
-              id="pages.searchTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage
-              id="pages.searchTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
-          </Button>
-        </FooterToolbar>
-      )}
-
-      {/*-----新增按钮---------*/}
+      {/*-----新增弹窗---------*/}
       <ModalForm
         title={intl.formatMessage({
           id: 'pages.searchTable.createForm.newUser',
-          defaultMessage: 'New user',
+          defaultMessage: 'New User',
         })}
         width="400px"
         open={createModalOpen}
         onOpenChange={handleModalOpen}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.UserListItem);
+        modalProps={{
+          destroyOnClose: true,
+          onCancel: () => console.log('run'),
+        }}
+        onFinish={async (record) => {
+          const success = await handleAdd(record);
           if (success) {
             handleModalOpen(false);
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
+        }}
+      >
+        {selectedRowsState?.length > 0 && (
+          /*-----页尾----*/
+          <FooterToolbar
+            extra={
+              <div>
+                <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
+                <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
+                {/*<FormattedMessage id="pages.searchTable.item"*/}
+                {/*                  defaultMessage="项"/>*/}
+                &nbsp;&nbsp;
+              </div>
+            }
+          >
+            {/*-----页尾按钮 批量删除，----*/}
+            <Button
+              onClick={async () => {
+                await handleRemove(selectedRowsState);
+                setSelectedRows([]);
+                actionRef.current?.reloadAndRest?.();
+              }}
+            >
+              <FormattedMessage
+                id="pages.searchTable.batchDeletion"
+                defaultMessage="Batch deletion"
+              />
+            </Button>
+            <Button type="primary">
+              <FormattedMessage
+                id="pages.searchTable.batchApproval"
+                defaultMessage="Batch approval"
+              />
+            </Button>
+          </FooterToolbar>
+        )}
+
+        <ProFormText
+          width="md"
+          name="username"
+          label="用户名称"
+          tooltip="最长为 24 位"
+          placeholder="请输入名称"
+        />
+
+        <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
+        <ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />
+        <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
+        <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
+        <ProFormSelect
+          width="md"
+          options={[
+            {
+              value: '0',
+              label: '男',
+            },
+            {
+              value: '1',
+              label: '女',
+            },
+          ]}
+          name="sex"
+          label="性别"
+        />
+        <ProFormSelect
+          width="md"
+          options={[
+            {
+              value: '0',
+              label: '不可用',
+            },
+            {
+              value: '1',
+              label: '可用',
+            },
+          ]}
+          name="enabled"
+          label="是否可用"
+        />
+
+        <ProFormSelect
+          width="md"
+          options={[
+            {
+              value: '1',
+              label: '类型1',
+            },
+            {
+              value: '2',
+              label: '类型2',
+            },
+            {
+              value: '3',
+              label: '类型3',
+            },
+          ]}
+          name="type"
+          label="类型"
+        />
+      </ModalForm>
+
+      {/*---------编辑信息--------*/}
+
+      <ModalForm
+        title={intl.formatMessage({
+          id: 'pages.searchTable.createForm.updateUser',
+          defaultMessage: 'New User',
+        })}
+        width="400px"
+        open={updateModalOpen}
+        onOpenChange={handleUpdateModalOpen}
+        modalProps={{
+          destroyOnClose: true,
+          onCancel: () => console.log('run'),
+        }}
+        initialValues={currentRow}
+        onFinish={async (record) => {
+          await handleSave(record);
         }}
       >
         <ProFormText
@@ -394,32 +492,79 @@ const TableList: React.FC = () => {
         <ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />
         <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
         <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
-        <ProFormText width="md" name="sex" label="性别" placeholder="请输入性别" />
-        <ProFormText width="md" name="enable" label="是否可用" placeholder="是否可用" />
+        <ProFormSelect
+          width="md"
+          options={[
+            {
+              value: '0',
+              label: '男',
+            },
+            {
+              value: '1',
+              label: '女',
+            },
+          ]}
+          name="sex"
+          label="性别"
+        />
+        <ProFormSelect
+          width="md"
+          options={[
+            {
+              value: '0',
+              label: '不可用',
+            },
+            {
+              value: '1',
+              label: '可用',
+            },
+          ]}
+          name="enabled"
+          label="是否可用"
+        />
 
-        <ProFormText width="md" name="type" label="类型" placeholder="请输入类型" />
+        <ProFormSelect
+          width="md"
+          options={[
+            {
+              value: '1',
+              label: '类型1',
+            },
+            {
+              value: '2',
+              label: '类型2',
+            },
+            {
+              value: '3',
+              label: '类型3',
+            },
+          ]}
+          name="type"
+          label="类型"
+        />
       </ModalForm>
+
       {/*--------修改更新------------*/}
-      <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-          if (success) {
-            handleUpdateModalOpen(false);
-            setCurrentRow(undefined);
-            if (actionRef.current) {
-              await actionRef.current.reload();
-            }
-          }
-        }}
-        onCancel={() => {
-          handleUpdateModalOpen(false);
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalOpen={updateModalOpen}
-        values={currentRow || {}}
-      />
+      {/*<UpdateForm*/}
+      {/*  onSubmit={async (value) => {*/}
+      {/*    const success = await handleUpdate(value);*/}
+      {/*    if (success) {*/}
+      {/*      handleUpdateModalOpen(false);*/}
+      {/*      setCurrentRow(undefined);*/}
+      {/*      if (actionRef.current) {*/}
+      {/*        await actionRef.current.reload();*/}
+      {/*      }*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*  onCancel={() => {*/}
+      {/*    handleUpdateModalOpen(false);*/}
+      {/*    if (!showDetail) {*/}
+      {/*      setCurrentRow(undefined);*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*  updateModalOpen={updateModalOpen}*/}
+      {/*  values={currentRow || {}}*/}
+      {/*/>*/}
 
       <Drawer
         width={600}

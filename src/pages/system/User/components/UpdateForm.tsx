@@ -2,7 +2,7 @@ import { type ActionType, ModalForm, ProFormText } from '@ant-design/pro-compone
 import React, { useRef, useState } from 'react';
 
 import { useIntl } from '@umijs/max';
-import { updateUser } from '@/services/system/api';
+import { updateUser } from '@/services/system/User/api';
 
 export type FormValueType = {
   target?: string;

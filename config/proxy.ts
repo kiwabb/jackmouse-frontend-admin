@@ -10,18 +10,36 @@
  * @doc https://umijs.org/docs/guides/proxy
  */
 export default {
-  //如果需要自定义本地开发服务器  请取消注释按需调整
+  // 如果需要自定义本地开发服务器  请取消注释按需调整
+  // 访问后端的请求都以/server/api/开头，这样不会请求本地的代理接口，
+  // 请求会被代理到后端
   dev: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/server/api/': {
       // 要代理的地址
-      target: 'http://192.168.0.184:9000',
+      target: 'http://t5sqq8.natappfree.cc',
+      // target: 'http://192.168.0.184:9000',
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
-      pathRewrite: { '^/server/api/': '' },
+      secure: false,
+      pathRewrite: { '^/server/api': '' },
     },
   },
+  // fix: {
+  //   // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
+  //   '/ims/api/': {
+  //     // 要代理的地址
+  //     target: 'http://t5sqq8.natappfree.cc/ims',
+  //     // target: 'http://192.168.0.184:9000',
+  //     // 配置了这个可以从 http 代理到 https
+  //     // 依赖 origin 的功能可能需要这个，比如 cookie
+  //     changeOrigin: true,
+  //     secure: false,
+  //     pathRewrite: { '^/ims/api': '' },
+  //   },
+  //
+  // },
 
   /**
    * @name 详细的代理配置

@@ -1,29 +1,8 @@
-// @ts-ignore
-/* eslint-disable */
 import { request } from '@umijs/max';
 
-// /** 获取规则列表 GET /api/rule */
-// export async function rule(
-//   params: {
-//     // query
-//     /** 当前的页码 */
-//     current?: number;
-//     /** 页面的容量 */
-//     pageSize?: number;
-//   },
-//   options?: { [key: string]: any },
-// ) {
-//   return request<API.UserList>('/api/rule', {
-//     method: 'GET',
-//     params: {
-//       ...params,
-//     },
-//     ...(options || {}),
-//   });
-// }
 // ---------------------------------
-/** 获取用户列表 GET /system/user */
-export async function user(
+/** 获取用户列表 /api/products/all */
+export async function products(
   params: {
     // query
     /** 当前的页码 */
@@ -51,7 +30,7 @@ export async function user(
 }
 // --------------------
 
-/** 更新规则 PUT /api/user */
+/** 更新规则 PUT /api/User */
 export async function updateUser(options?: { [key: string]: any }) {
   return request<API.UserListItem>('/server/api/basic-system/sysUser/update', {
     method: 'PUT',
@@ -62,11 +41,10 @@ export async function updateUser(options?: { [key: string]: any }) {
   });
 }
 
-/** 新建规则 POST /api/user */
+/** 新建规则 POST /api/User */
 export async function addUser(options?: { [key: string]: any }) {
   return request<API.UserListItem>('/server/api/basic-system/sysUser/save', {
     method: 'POST',
-
     data: {
       method: 'post',
       ...(options || {}),
@@ -75,12 +53,9 @@ export async function addUser(options?: { [key: string]: any }) {
 }
 
 /** 删除规则 DELETE /api/rule */
-export async function removeUser(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/server/api/basic-system/sysUser/remove/{id}', {
+export async function removeUser(id: number | undefined, options?: Record<string, any>) {
+  return request<Record<string, any>>(`/server/api/basic-system/sysUser/remove/${id}`, {
     method: 'DELETE',
-    data: {
-      method: 'delete',
-      ...(options || {}),
-    },
+    ...(options || {}),
   });
 }
