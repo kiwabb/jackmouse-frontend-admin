@@ -56,6 +56,13 @@ declare namespace API {
     success?: boolean;
   };
 
+  type Page<T> = {
+    data: T[];
+    /** 列表的内容总数 */
+    total: number;
+    success?: boolean;
+  };
+
   type FakeCaptcha = {
     code?: number;
     status?: string;

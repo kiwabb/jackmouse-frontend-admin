@@ -33,6 +33,8 @@ export default {
   'pages.searchTable.updateForm.userConfig': '用户编辑',
 
   'pages.searchTable.updateForm.basicConfig': '基本信息',
+
+  'pages.searchTable.system.user': '用户管理',
   'pages.searchTable.system.user.username': '用户名',
   'pages.searchTable.system.user.nickname': '昵称',
   'pages.searchTable.system.user.avatar': '头像',
@@ -45,6 +47,9 @@ export default {
   'pages.searchTable.system.user.type': '类型',
   'pages.searchTable.createForm.newUser': '新用户',
   'pages.searchTable.createForm.updateUser': '编辑用户',
+
+  'pages.searchTable.system.menu': '菜单管理',
+
   // ----------------------------------------------------
   'pages.searchTable.system.category.categoryLabel': '产品类别',
   'pages.searchTable.system.category.categoryName': '产品名称',

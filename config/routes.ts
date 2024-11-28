@@ -70,6 +70,11 @@ export default [
         name: 'category',
         component: './system/Category',
       },
+      {
+        path: '/system/Menu',
+        name: 'menu',
+        component: './system/Menu',
+      },
     ],
   },
   {

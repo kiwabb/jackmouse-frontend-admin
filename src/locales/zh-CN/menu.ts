@@ -34,7 +34,9 @@ export default {
   'menu.list.search-list.applications': '搜索列表（应用）',
 
   'menu.system': '系统管理',
-  'menu.system.user': '用户列表',
+  'menu.system.user': '用户管理',
+  'menu.system.menu': '菜单管理',
+  'menu.system.role': '菜单管理',
 
   'menu.profile': '详情页',
   'menu.profile.basic': '基础详情页',
