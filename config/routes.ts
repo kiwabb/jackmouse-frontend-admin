@@ -65,11 +65,11 @@ export default [
         name: 'user',
         component: './system/User',
       },
-      // {
-      //   path: '/system/category',
-      //   name: 'category',
-      //   component: './system/Category',
-      // },
+      {
+        path: '/system/category',
+        name: 'category',
+        component: './system/Category',
+      },
     ],
   },
   {
