@@ -6,7 +6,7 @@ declare namespace API {
     /**
      * 主键
      */
-    id?: number;
+    id: number;
     /**
      * 头像
      */

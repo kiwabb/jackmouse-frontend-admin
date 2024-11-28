@@ -20,7 +20,7 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, Form, message, Popconfirm } from 'antd';
+import { App, Avatar, Button, Drawer, Form, message, Popconfirm } from 'antd';
 import React, { useRef, useState } from 'react';
 // import type {FormValueType} from './components/UpdateForm';
 // import UpdateForm from './components/UpdateForm';
@@ -103,6 +103,7 @@ const TableList: React.FC = () => {
    * @zh-CN 新建窗口的弹窗
    *  */
   const [createModalOpen, handleModalOpen] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: number]: boolean }>({});
   /**
    * @en-US The pop-up window of the distribution update window
    * @zh-CN 分布更新窗口的弹窗
@@ -141,7 +142,7 @@ const TableList: React.FC = () => {
   // 保存修改
   const handleSave = async (fields: API.UserListItem) => {
     try {
-      await updateUser({ id: currentRow!.id, ...fields });
+      await updateUser({ fields });
       message.success('修改成功');
       handleUpdateModalOpen(false);
     } catch (error) {
@@ -152,11 +153,20 @@ const TableList: React.FC = () => {
     console.log(fields);
   };
 
+  const handleOnError = (id: number) => {
+    setErrors((prevErrors) => ({ ...prevErrors, [id]: true }));
+    return true;
+  };
+
   const columns: ProColumns<API.UserListItem>[] = [
     {
+      // 列名称
       title: (
         <FormattedMessage id="pages.searchTable.system.user.username" defaultMessage="user name" />
       ),
+
+      //tooltip: 'user name',//会在 title 之后展示一个 icon，hover 之后提示一些信息
+      //ellipsis: false,//	是否自动缩略
       dataIndex: 'username',
       tip: 'The User name is the unique key',
       render: (dom, entity) => {
@@ -185,6 +195,17 @@ const TableList: React.FC = () => {
       dataIndex: 'avatar',
       sorter: true,
       hideInForm: false,
+      render: (dom, entity) => {
+        return !errors[entity.id] ? (
+          <Avatar
+            src={dom}
+            alt={entity.nickname?.charAt(0)}
+            onError={() => handleOnError(entity.id)}
+          />
+        ) : (
+          <Avatar style={{ backgroundColor: '#87d068' }}>{entity.nickname?.charAt(0)}</Avatar>
+        );
+      },
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.phone" defaultMessage="phone" />,
@@ -217,22 +238,20 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: (
-        <FormattedMessage id="pages.searchTable.system.user.enable" defaultMessage="是否可用" />
-      ),
+      title: <FormattedMessage id="pages.searchTable.system.user.enable" defaultMessage="状态" />,
       dataIndex: 'enabled',
       sorter: true,
       hideInForm: true,
       valueEnum: {
         0: {
-          text: (
-            <FormattedMessage id="pages.searchTable.system.user.unable" defaultMessage="不可用" />
-          ),
-          status: '不可用',
+          text: <FormattedMessage id="pages.searchTable.system.user.able" defaultMessage="正常" />,
+          status: '正常',
         },
         1: {
-          text: <FormattedMessage id="pages.searchTable.system.user.able" defaultMessage="可用" />,
-          status: '可用',
+          text: (
+            <FormattedMessage id="pages.searchTable.system.user.unable" defaultMessage="禁用" />
+          ),
+          status: '禁用',
         },
       },
     },
@@ -306,254 +325,257 @@ const TableList: React.FC = () => {
     },
   ];
   return (
-    <PageContainer>
-      <ProTable<API.UserListItem, API.PageParams>
-        headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: 'Enquiry form',
-        })}
-        actionRef={actionRef}
-        rowKey="key"
-        search={{
-          labelWidth: 80,
-        }} //查询框
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              handleModalOpen(true);
-            }}
-          >
-            <PlusOutlined />
-            {/*新建*/}
-            <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
-          </Button>,
-        ]} //工具栏渲染
-        request={user}
-        columns={columns}
-        // rowSelection={{
-        //   onChange: (_, selectedRows) => {
-        //     setSelectedRows(selectedRows);
-        //   },
-        // }}
-      />
-      {/*-----新增弹窗---------*/}
-      <ModalForm
-        title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newUser',
-          defaultMessage: 'New User',
-        })}
-        width="400px"
-        open={createModalOpen}
-        onOpenChange={handleModalOpen}
-        modalProps={{
-          destroyOnClose: true,
-          onCancel: () => console.log('run'),
-        }}
-        onFinish={async (record) => {
-          const success = await handleAdd(record);
-          if (success) {
-            handleModalOpen(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
+    <App>
+      <PageContainer>
+        <ProTable<API.UserListItem, API.PageParams>
+          headerTitle={intl.formatMessage({
+            id: 'pages.searchTable.title',
+            defaultMessage: 'Enquiry form',
+          })}
+          actionRef={actionRef}
+          rowKey="key"
+          search={{
+            labelWidth: 80,
+          }} //查询框
+          toolBarRender={() => [
+            <Button
+              type="primary"
+              key="primary"
+              onClick={() => {
+                handleModalOpen(true);
+              }}
+            >
+              <PlusOutlined />
+              {/*新建*/}
+              <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+            </Button>,
+          ]} //工具栏渲染
+          request={user}
+          columns={columns}
+          // rowSelection={{
+          //   onChange: (_, selectedRows) => {
+          //     setSelectedRows(selectedRows);
+          //   },
+          // }}
+        />
+        {/*-----新增弹窗---------*/}
+        <ModalForm
+          title={intl.formatMessage({
+            id: 'pages.searchTable.createForm.newUser',
+            defaultMessage: 'New User',
+          })}
+          width="400px"
+          open={createModalOpen}
+          onOpenChange={handleModalOpen}
+          modalProps={{
+            destroyOnClose: true,
+            onCancel: () => console.log('run'),
+          }}
+          onFinish={async (record) => {
+            const success = await handleAdd(record as API.UserListItem);
+            if (success) {
+              handleModalOpen(false);
+              if (actionRef.current) {
+                actionRef.current.reload();
+              }
             }
-          }
-        }}
-      >
-        <ProFormText
-          width="md"
-          name="username"
-          label="用户名称"
-          tooltip="最长为 24 位"
-          placeholder="请输入名称"
-        />
-
-        <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
-        <ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />
-        <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
-        <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
-        <ProFormSelect
-          width="md"
-          options={[
-            {
-              value: '0',
-              label: '男',
-            },
-            {
-              value: '1',
-              label: '女',
-            },
-          ]}
-          name="sex"
-          label="性别"
-        />
-        <ProFormSelect
-          width="md"
-          options={[
-            {
-              value: '0',
-              label: '不可用',
-            },
-            {
-              value: '1',
-              label: '可用',
-            },
-          ]}
-          name="enabled"
-          label="是否可用"
-        />
-
-        <ProFormSelect
-          width="md"
-          options={[
-            {
-              value: '1',
-              label: '类型1',
-            },
-            {
-              value: '2',
-              label: '类型2',
-            },
-            {
-              value: '3',
-              label: '类型3',
-            },
-          ]}
-          name="type"
-          label="类型"
-        />
-      </ModalForm>
-
-      {/*---------编辑信息--------*/}
-
-      <ModalForm
-        title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.updateUser',
-          defaultMessage: 'New User',
-        })}
-        width="400px"
-        open={updateModalOpen}
-        onOpenChange={handleUpdateModalOpen}
-        modalProps={{
-          destroyOnClose: true,
-          onCancel: () => console.log('run'),
-        }}
-        initialValues={currentRow}
-        onFinish={async (record) => {
-          await handleSave(record);
-        }}
-      >
-        <ProFormText
-          width="md"
-          name="username"
-          label="用户名称"
-          tooltip="最长为 24 位"
-          placeholder="请输入名称"
-        />
-
-        <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
-        <ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />
-        <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
-        <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
-        <ProFormSelect
-          width="md"
-          options={[
-            {
-              value: '0',
-              label: '男',
-            },
-            {
-              value: '1',
-              label: '女',
-            },
-          ]}
-          name="sex"
-          label="性别"
-        />
-        <ProFormSelect
-          width="md"
-          options={[
-            {
-              value: '0',
-              label: '不可用',
-            },
-            {
-              value: '1',
-              label: '可用',
-            },
-          ]}
-          name="enabled"
-          label="是否可用"
-        />
-
-        <ProFormSelect
-          width="md"
-          options={[
-            {
-              value: '1',
-              label: '类型1',
-            },
-            {
-              value: '2',
-              label: '类型2',
-            },
-            {
-              value: '3',
-              label: '类型3',
-            },
-          ]}
-          name="type"
-          label="类型"
-        />
-      </ModalForm>
-
-      {/*--------修改更新------------*/}
-      {/*<UpdateForm*/}
-      {/*  onSubmit={async (value) => {*/}
-      {/*    const success = await handleUpdate(value);*/}
-      {/*    if (success) {*/}
-      {/*      handleUpdateModalOpen(false);*/}
-      {/*      setCurrentRow(undefined);*/}
-      {/*      if (actionRef.current) {*/}
-      {/*        await actionRef.current.reload();*/}
-      {/*      }*/}
-      {/*    }*/}
-      {/*  }}*/}
-      {/*  onCancel={() => {*/}
-      {/*    handleUpdateModalOpen(false);*/}
-      {/*    if (!showDetail) {*/}
-      {/*      setCurrentRow(undefined);*/}
-      {/*    }*/}
-      {/*  }}*/}
-      {/*  updateModalOpen={updateModalOpen}*/}
-      {/*  values={currentRow || {}}*/}
-      {/*/>*/}
-
-      <Drawer
-        width={600}
-        open={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {currentRow?.username && (
-          <ProDescriptions<API.UserListItem>
-            column={2}
-            title={currentRow?.username}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.username,
-            }}
-            columns={columns as ProDescriptionsItemProps<API.UserListItem>[]}
+          }}
+        >
+          <ProFormText
+            width="md"
+            name="username"
+            label="用户名称"
+            tooltip="最长为 24 位"
+            placeholder="请输入名称"
           />
-        )}
-      </Drawer>
-    </PageContainer>
+
+          <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
+          {/*新增时 头像默认 后续用户修改*/}
+          {/*<ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />*/}
+          <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
+          <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
+          <ProFormSelect
+            width="md"
+            options={[
+              {
+                value: '0',
+                label: '男',
+              },
+              {
+                value: '1',
+                label: '女',
+              },
+            ]}
+            name="sex"
+            label="性别"
+          />
+          <ProFormSelect
+            width="md"
+            options={[
+              {
+                value: '0',
+                label: '正常',
+              },
+              {
+                value: '1',
+                label: '禁用',
+              },
+            ]}
+            name="enabled"
+            label="状态"
+          />
+
+          <ProFormSelect
+            width="md"
+            options={[
+              {
+                value: '1',
+                label: '类型1',
+              },
+              {
+                value: '2',
+                label: '类型2',
+              },
+              {
+                value: '3',
+                label: '类型3',
+              },
+            ]}
+            name="type"
+            label="类型"
+          />
+        </ModalForm>
+
+        {/*---------编辑信息--------*/}
+
+        <ModalForm
+          title={intl.formatMessage({
+            id: 'pages.searchTable.createForm.updateUser',
+            defaultMessage: 'New User',
+          })}
+          width="400px"
+          open={updateModalOpen}
+          onOpenChange={handleUpdateModalOpen}
+          modalProps={{
+            destroyOnClose: true,
+          }}
+          initialValues={currentRow}
+          onFinish={async (record) => {
+            await handleSave(record as API.UserListItem);
+          }}
+        >
+          <ProFormText
+            width="md"
+            name="username"
+            label="用户名称"
+            tooltip="最长为 24 位"
+            placeholder="请输入名称"
+            disabled
+          />
+
+          <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
+          {/*<ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />*/}
+          <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
+          <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
+          <ProFormSelect
+            width="md"
+            options={[
+              {
+                value: 0,
+                label: '男',
+              },
+              {
+                value: 1,
+                label: '女',
+              },
+            ]}
+            name="sex"
+            label="性别"
+          />
+          <ProFormSelect
+            width="md"
+            options={[
+              {
+                value: 0,
+                label: '正常',
+              },
+              {
+                value: 1,
+                label: '禁用',
+              },
+            ]}
+            name="enabled"
+            label="状态"
+          />
+
+          <ProFormSelect
+            width="md"
+            options={[
+              {
+                value: '1',
+                label: '类型1',
+              },
+              {
+                value: '2',
+                label: '类型2',
+              },
+              {
+                value: '3',
+                label: '类型3',
+              },
+            ]}
+            name="type"
+            label="类型"
+          />
+        </ModalForm>
+
+        {/*--------修改更新------------*/}
+        {/*<UpdateForm*/}
+        {/*  onSubmit={async (value) => {*/}
+        {/*    const success = await handleUpdate(value);*/}
+        {/*    if (success) {*/}
+        {/*      handleUpdateModalOpen(false);*/}
+        {/*      setCurrentRow(undefined);*/}
+        {/*      if (actionRef.current) {*/}
+        {/*        await actionRef.current.reload();*/}
+        {/*      }*/}
+        {/*    }*/}
+        {/*  }}*/}
+        {/*  onCancel={() => {*/}
+        {/*    handleUpdateModalOpen(false);*/}
+        {/*    if (!showDetail) {*/}
+        {/*      setCurrentRow(undefined);*/}
+        {/*    }*/}
+        {/*  }}*/}
+        {/*  updateModalOpen={updateModalOpen}*/}
+        {/*  values={currentRow || {}}*/}
+        {/*/>*/}
+
+        <Drawer
+          width={600}
+          open={showDetail}
+          onClose={() => {
+            setCurrentRow(undefined);
+            setShowDetail(false);
+          }}
+          closable={false}
+        >
+          {currentRow?.username && (
+            <ProDescriptions<API.UserListItem>
+              column={2}
+              title={currentRow?.username}
+              request={async () => ({
+                data: currentRow || {},
+              })}
+              params={{
+                id: currentRow?.username,
+              }}
+              columns={columns as ProDescriptionsItemProps<API.UserListItem>[]}
+            />
+          )}
+        </Drawer>
+      </PageContainer>
+    </App>
   );
 };
 export default TableList;
