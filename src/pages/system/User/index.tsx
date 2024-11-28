@@ -13,7 +13,6 @@ import {
   ProFormSelect,
 } from '@ant-design/pro-components';
 import {
-  FooterToolbar,
   ModalForm,
   PageContainer,
   ProDescriptions,
@@ -26,7 +25,7 @@ import React, { useRef, useState } from 'react';
 // import type {FormValueType} from './components/UpdateForm';
 // import UpdateForm from './components/UpdateForm';
 import { updateUser } from '@/services/system/User/api';
-import { removeRule } from '@/services/ant-design-pro/api';
+//import { removeRule } from '@/services/ant-design-pro/api';
 
 /**
  * @en-US Add node
@@ -81,22 +80,22 @@ const handleAdd = async (fields: API.UserListItem) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.UserListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map((row) => row.id),
-    });
-    hide();
-    message.success('Deleted successfully and will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Delete failed, please try again');
-    return false;
-  }
-};
+// const handleRemove = async (selectedRows: API.UserListItem[]) => {
+//   const hide = message.loading('正在删除');
+//   if (!selectedRows) return true;
+//   try {
+//     await removeRule({
+//       key: selectedRows.map((row) => row.id),
+//     });
+//     hide();
+//     message.success('Deleted successfully and will refresh soon');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('Delete failed, please try again');
+//     return false;
+//   }
+// };
 
 const TableList: React.FC = () => {
   /**
@@ -114,7 +113,7 @@ const TableList: React.FC = () => {
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.UserListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([]);
+  //const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([]);
   const [form] = Form.useForm();
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -333,11 +332,11 @@ const TableList: React.FC = () => {
         ]} //工具栏渲染
         request={user}
         columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
+        // rowSelection={{
+        //   onChange: (_, selectedRows) => {
+        //     setSelectedRows(selectedRows);
+        //   },
+        // }}
       />
       {/*-----新增弹窗---------*/}
       <ModalForm
@@ -362,41 +361,6 @@ const TableList: React.FC = () => {
           }
         }}
       >
-        {selectedRowsState?.length > 0 && (
-          /*-----页尾----*/
-          <FooterToolbar
-            extra={
-              <div>
-                <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
-                <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-                {/*<FormattedMessage id="pages.searchTable.item"*/}
-                {/*                  defaultMessage="项"/>*/}
-                &nbsp;&nbsp;
-              </div>
-            }
-          >
-            {/*-----页尾按钮 批量删除，----*/}
-            <Button
-              onClick={async () => {
-                await handleRemove(selectedRowsState);
-                setSelectedRows([]);
-                actionRef.current?.reloadAndRest?.();
-              }}
-            >
-              <FormattedMessage
-                id="pages.searchTable.batchDeletion"
-                defaultMessage="Batch deletion"
-              />
-            </Button>
-            <Button type="primary">
-              <FormattedMessage
-                id="pages.searchTable.batchApproval"
-                defaultMessage="Batch approval"
-              />
-            </Button>
-          </FooterToolbar>
-        )}
-
         <ProFormText
           width="md"
           name="username"

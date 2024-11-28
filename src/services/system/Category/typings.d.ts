@@ -4,17 +4,14 @@
 declare namespace API {
   type CategoryListItem = {
     id?: number | null;
-    name: string;
+    name?: string;
     // products?: ProductDTO[] | null;
-    [property: string]: any;
   };
 
   type CategoryList = {
-    status: number;
-    message?: boolean;
-    categories?: CategoryListItem[];
+    data?: CategoryListItem[];
     /** 列表的内容总数 */
-    // total?: number;
-    timestamp?: null | string;
+    total?: number;
+    success?: boolean;
   };
 }

@@ -43,7 +43,7 @@ declare namespace API {
     /**
      * 用户类型
      */
-    type?: number | string | null;
+    type?: number | string;
     createBy?: number | null;
     createTime?: null | string;
     updateBy?: number | null;
