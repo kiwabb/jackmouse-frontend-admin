@@ -126,22 +126,20 @@ const TableList: React.FC = () => {
         className: keyword && entity.name?.includes(keyword) ? 'highlight' : '',
       }),
       render: (dom, entity) => {
-        if (entity.type === 1) {
-          if (entity.url?.startsWith('javascript')) {
-            return (
-              <Space size={'small'}>
-                <FolderOpenOutlined />
-                {entity.name}
-              </Space>
-            );
-          } else {
-            return (
-              <Space size={'small'}>
-                <MenuOutlined />
-                {entity.name}
-              </Space>
-            );
-          }
+        if (entity.url?.startsWith('javascript')) {
+          return (
+            <Space size={'small'}>
+              <FolderOpenOutlined />
+              {entity.name}
+            </Space>
+          );
+        } else if (entity.type === 1) {
+          return (
+            <Space size={'small'}>
+              <MenuOutlined />
+              {entity.name}
+            </Space>
+          );
         } else {
           return (
             <Space size={'small'}>
