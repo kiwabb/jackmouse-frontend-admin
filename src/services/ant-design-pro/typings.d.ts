@@ -63,6 +63,11 @@ declare namespace API {
     success?: boolean;
   };
 
+  type Result<T> = {
+    data: T;
+    success?: boolean;
+  };
+
   type FakeCaptcha = {
     code?: number;
     status?: string;

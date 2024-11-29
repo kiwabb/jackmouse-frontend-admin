@@ -15,7 +15,7 @@ declare namespace API {
     /**
      * 是否隐藏
      */
-    hidden?: boolean | null;
+    hidden: boolean;
 
     /**
      * 菜单名称
@@ -42,5 +42,6 @@ declare namespace API {
     updateTime?: null | string;
     createBy?: number | null;
     createTime?: null | string;
+    children?: Menu[];
   };
 }

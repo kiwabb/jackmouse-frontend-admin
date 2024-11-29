@@ -42,22 +42,40 @@ export async function menu(
   });
   return data;
 }
+
+export async function menuTypeOne(options?: Record<string, any>) {
+  const { data } = await request<API.Page<API.SysMenu>>(
+    `/server/api/basic-system/sysMenu/menuTypeOne`,
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
+  return data;
+}
+export async function menuById(id: number, options?: { [key: string]: any }) {
+  const { data } = await request<API.Result<API.SysMenu>>(
+    `/server/api/basic-system/sysMenu/getInfo/${id}`,
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
+  return data;
+}
 // --------------------
 
 /** 更新规则 PUT /api/User */
-export async function updateUser(options?: { [key: string]: any }) {
-  return request<API.UserListItem>('/server/api/basic-system/sysUser/update', {
+export async function updateMenu(data?: { [key: string]: any }) {
+  return request<API.UserListItem>('/server/api/basic-system/sysMenu/update', {
     method: 'PUT',
-    data: {
-      method: 'update',
-      ...(options || {}),
-    },
+    data,
   });
 }
 
 /** 新建规则 POST /api/User */
-export async function addUser(options?: { [key: string]: any }) {
-  return request<API.UserListItem>('/server/api/basic-system/sysUser/save', {
+export async function addMenu(options?: { [key: string]: any }) {
+  return request<API.SysMenu>('/server/api/basic-system/sysMenu/save', {
     method: 'POST',
     data: {
       method: 'post',
@@ -67,8 +85,8 @@ export async function addUser(options?: { [key: string]: any }) {
 }
 
 /** 删除规则 DELETE /api/rule */
-export async function removeUser(id: number | undefined, options?: Record<string, any>) {
-  return request<Record<string, any>>(`/server/api/basic-system/sysUser/remove/${id}`, {
+export async function removeMenu(id: number, options?: Record<string, any>) {
+  return request<Record<string, any>>(`/server/api/basic-system/sysMenu/remove/${id}`, {
     method: 'DELETE',
     ...(options || {}),
   });

@@ -1,8 +1,13 @@
-import { addRule, removeRule, updateRule } from '@/services/ant-design-pro/api';
 import { FolderOpenOutlined, MenuOutlined, PlusOutlined, ProfileOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
-  FooterToolbar,
+  ActionType,
+  ProColumns,
+  ProDescriptionsItemProps,
+  ProFormDigit,
+  ProFormRadio,
+  ProFormTreeSelect,
+} from '@ant-design/pro-components';
+import {
   ModalForm,
   PageContainer,
   ProDescriptions,
@@ -11,11 +16,17 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, message, Popconfirm, Space, Tag } from 'antd';
+import { Button, Drawer, message, Popconfirm, Space, Switch, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
-import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
-import { menu } from '@/services/system/Menu/api';
+import {
+  addMenu,
+  menu,
+  menuById,
+  menuTypeOne,
+  removeMenu,
+  updateMenu,
+} from '@/services/system/Menu/api';
 import { treeify } from '@/utils/treeify';
 
 /**
@@ -23,16 +34,16 @@ import { treeify } from '@/utils/treeify';
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.RuleListItem) => {
+const handleAdd = async (fields: API.SysMenu) => {
   const hide = message.loading('正在添加');
   try {
-    await addRule({ ...fields });
+    await addMenu({ ...fields });
     hide();
-    message.success('Added successfully');
+    message.success('添加成功！');
     return true;
   } catch (error) {
     hide();
-    message.error('Adding failed, please try again!');
+    message.error('添加失败！');
     return false;
   }
 };
@@ -43,19 +54,16 @@ const handleAdd = async (fields: API.RuleListItem) => {
  *
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
+const handleUpdate = async (fields: API.SysMenu) => {
   const hide = message.loading('Configuring');
   try {
-    await updateRule({
-      name: fields.name,
-    });
+    await updateMenu(fields);
     hide();
-
-    message.success('Configuration is successful');
+    message.success('修改成功');
     return true;
   } catch (error) {
     hide();
-    message.error('Configuration failed, please try again!');
+    message.error('修改失败');
     return false;
   }
 };
@@ -64,15 +72,13 @@ const handleUpdate = async (fields: FormValueType) => {
  *  Delete node
  * @zh-CN 删除节点
  *
- * @param selectedRows
+ * @param entity
  */
-const handleRemove = async (selectedRows: API.SysMenu[]) => {
+const handleRemove = async (entity: API.SysMenu) => {
   const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
+  if (!entity) return true;
   try {
-    await removeRule({
-      key: selectedRows.map((row) => row.id),
-    });
+    await removeMenu(entity.id);
     hide();
     message.success('Deleted successfully and will refresh soon');
     return true;
@@ -87,7 +93,6 @@ const TableList: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [keyword, _setKeyword] = useState<string>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
-  const [data, setData] = useState<API.SysMenu[]>();
   const [keys, setKeys] = useState<React.Key[]>([]);
   /**
    * @en-US Pop-up window of new window
@@ -104,7 +109,6 @@ const TableList: React.FC = () => {
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.SysMenu>();
-  const [selectedRowsState, setSelectedRows] = useState<API.SysMenu[]>([]);
 
   /**
    * @en-US International configuration
@@ -116,6 +120,7 @@ const TableList: React.FC = () => {
     {
       title: <FormattedMessage id="pages.searchTable.system.menu.name" defaultMessage="菜单名称" />,
       dataIndex: 'name',
+      width: 180,
       // 设置单元格属性
       onCell: (entity) => ({
         className: keyword && entity.name?.includes(keyword) ? 'highlight' : '',
@@ -148,14 +153,7 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.menu.url" defaultMessage="菜单url" />,
-      dataIndex: 'url',
-      onCell: (entity) => ({
-        className: keyword && entity.url?.includes(keyword) ? 'highlight' : '',
-      }),
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.system.menu.path" defaultMessage="菜单path" />,
+      title: <FormattedMessage id="pages.searchTable.system.menu.path" defaultMessage="路由地址" />,
       dataIndex: 'path',
       ellipsis: true,
       onCell: (entity) => ({
@@ -163,26 +161,70 @@ const TableList: React.FC = () => {
       }),
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.menu.css" defaultMessage="样式" />,
-      dataIndex: 'css',
+      title: (
+        <FormattedMessage
+          id="pages.searchTable.system.menu.componentName"
+          defaultMessage="组件名称"
+        />
+      ),
+      dataIndex: 'componentName',
+      ellipsis: true,
+      onCell: (entity) => ({
+        className: keyword && entity.path?.includes(keyword) ? 'highlight' : '',
+      }),
+    },
+    {
+      title: (
+        <FormattedMessage id="pages.searchTable.system.menu.component" defaultMessage="组件地址" />
+      ),
+      dataIndex: 'component',
+      ellipsis: true,
+      onCell: (entity) => ({
+        className: keyword && entity.path?.includes(keyword) ? 'highlight' : '',
+      }),
+    },
+    {
+      title: <FormattedMessage id="pages.searchTable.system.menu.icon" defaultMessage="图标" />,
+      dataIndex: 'icon',
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.menu.sort" defaultMessage="排序" />,
       dataIndex: 'sort',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.menu.sort" defaultMessage="排序" />,
+      title: <FormattedMessage id="pages.searchTable.system.menu.sort" defaultMessage="类型" />,
       dataIndex: 'type',
       render: (_dom, entity) => {
-        if (entity.type === 1) {
-          if (entity.url?.startsWith('javascript')) {
-            return <Tag color="green">目录</Tag>;
-          } else {
-            return <Tag color="blue">菜单</Tag>;
-          }
+        if (!entity.path?.startsWith('http')) {
+          return <Tag color="blue">资源</Tag>;
+        } else if (entity.type === 1) {
+          return <Tag color="green">目录</Tag>;
         } else {
-          return <Tag color="cyan">资源</Tag>;
+          return <Tag color="cyan">菜单</Tag>;
         }
+      },
+    },
+    {
+      title: (
+        <FormattedMessage id="pages.searchTable.system.menu.hidden" defaultMessage="是否隐藏" />
+      ),
+      dataIndex: 'hidden',
+      render: (_dom, entity) => {
+        return (
+          <Switch
+            checked={entity.hidden}
+            checkedChildren={'隐藏'}
+            unCheckedChildren={'显示'}
+            onChange={(checked) => {
+              entity.hidden = checked;
+              handleUpdate(entity).then(() => {
+                if (actionRef.current) {
+                  actionRef.current.reload();
+                }
+              });
+            }}
+          />
+        );
       },
     },
     {
@@ -194,7 +236,9 @@ const TableList: React.FC = () => {
           key="edit"
           onClick={() => {
             handleUpdateModalOpen(true);
-            setCurrentRow(entity);
+            menuById(entity.id).then((res) => {
+              setCurrentRow(res);
+            });
           }}
         >
           <FormattedMessage id="pages.searchTable.edit" defaultMessage="编辑" />
@@ -203,7 +247,7 @@ const TableList: React.FC = () => {
           key={entity.id}
           title={`确认删除菜单[${entity.name}]?`}
           onConfirm={async () => {
-            const success = await handleRemove([entity]);
+            const success = await handleRemove(entity);
             if (success) {
               if (actionRef.current) {
                 actionRef.current.reload();
@@ -212,7 +256,7 @@ const TableList: React.FC = () => {
           }}
         >
           <a key={'delete'}>
-            <FormattedMessage id="pages.searchTable.edit" defaultMessage="删除" />
+            <FormattedMessage id="pages.searchTable.删除" defaultMessage="删除" />
           </a>
         </Popconfirm>,
       ],
@@ -247,22 +291,28 @@ const TableList: React.FC = () => {
             >
               全部折叠
             </Button>
-            <Button type="primary" onClick={() => {}}>
+            <Button
+              type="primary"
+              onClick={() => {
+                handleModalOpen(true);
+              }}
+            >
               <PlusOutlined /> 添加
             </Button>
           </>,
         ]}
         request={async (params) => {
           const menus = await menu(params);
-          console.log('menus', menus);
           const treeData = treeify(menus, {});
-          treeData.forEach((node) => {
+          menus.forEach((node) => {
             if (node.children && node.children.length === 0) delete node.children;
           });
           setKeys(menus.map((node) => node.id));
-          setData(treeData);
+          return {
+            data: treeData,
+            success: true,
+          };
         }}
-        dataSource={data}
         columns={columns}
         pagination={false}
         expandable={{
@@ -270,56 +320,22 @@ const TableList: React.FC = () => {
           onExpandedRowsChange: (expandedRows) => setExpandedRowKeys([...expandedRows]),
         }}
       />
-      {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
-              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.id!, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
-              </span>
-            </div>
-          }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage
-              id="pages.searchTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage
-              id="pages.searchTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
-          </Button>
-        </FooterToolbar>
-      )}
+
       <ModalForm
         title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: 'New rule',
+          id: 'pages.searchTable.createForm.newMenu',
+          defaultMessage: '新建规则',
         })}
         width="400px"
         open={createModalOpen}
         onOpenChange={handleModalOpen}
+        modalProps={{
+          destroyOnClose: true,
+          okText: '保存',
+        }}
         onFinish={async (value) => {
-          let data = { ...value, username: 'kiwa' };
-          const success = await handleAdd(data as API.RuleListItem);
+          let data = { ...value };
+          const success = await handleAdd(data as API.SysMenu);
           if (success) {
             handleModalOpen(false);
             if (actionRef.current) {
@@ -328,27 +344,111 @@ const TableList: React.FC = () => {
           }
         }}
       >
+        <ProFormTreeSelect
+          label={'上级菜单'}
+          name={'parentId'}
+          width={'md'}
+          request={async () => {
+            // 查询菜单类型的数据
+            const menus = await menuTypeOne();
+            if (menus) {
+              const a = menus.map((item) => {
+                return { ...item, key: item.id, title: item.name, value: item.id };
+              });
+              const treeData: any = treeify(a, {});
+              const root = {
+                title: '顶级目录',
+                value: -1,
+                key: -1,
+              };
+              treeData.unshift(root);
+              console.log('treeData', treeData);
+              return treeData;
+            }
+            return [];
+          }}
+          fieldProps={{
+            fieldNames: {
+              label: 'title',
+            },
+            placeholder: '请选择上级菜单',
+          }}
+        />
         <ProFormText
           rules={[
             {
               required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
+              message: '菜单名称不能为空',
+            },
+          ]}
+          width={'md'}
+          name={'name'}
+          label={'菜单名称'}
+          placeholder={'请输入菜单名称'}
+        />
+        <ProFormText width="md" name="component" label="组件地址" placeholder="输入组件地址" />
+        <ProFormText width="md" name="componentName" label="组件名称" placeholder="输入组件名称" />
+        <ProFormText width="md" name="path" label="路由地址" placeholder="输入路由地址" />
+        <ProFormText
+          rules={[
+            {
+              required: true,
+              message: '菜单图标不为空',
             },
           ]}
           width="md"
-          name="name"
+          name="icon"
+          label="菜单图标"
+          placeholder="输入菜单图标"
         />
         <ProFormTextArea width="md" name="desc" />
+        <ProFormRadio.Group
+          name="hidden"
+          label="是否隐藏"
+          width="lg"
+          initialValue={false}
+          options={[
+            {
+              label: '否',
+              value: false,
+            },
+            {
+              label: '是',
+              value: true,
+            },
+          ]}
+          rules={[{ required: true, message: '选择是否隐藏' }]}
+        />
+        <ProFormRadio.Group
+          name="type"
+          label="是否为菜单"
+          width="lg"
+          initialValue={1}
+          options={[
+            {
+              label: '是',
+              value: 1,
+            },
+            {
+              label: '否',
+              value: 2,
+            },
+          ]}
+          rules={[{ required: true, message: '选择是否为菜单' }]}
+        />
+        <ProFormDigit
+          label="排序号"
+          name="sort"
+          width="md"
+          min={1}
+          fieldProps={{ precision: 0 }}
+          rules={[{ required: true, message: '选择排序号' }]}
+        />
       </ModalForm>
 
       <UpdateForm
         onSubmit={async (value) => {
-          const success = await handleUpdate(value);
+          const success = await handleUpdate({ ...currentRow, ...value });
           if (success) {
             handleUpdateModalOpen(false);
             setCurrentRow(undefined);
@@ -363,8 +463,9 @@ const TableList: React.FC = () => {
             setCurrentRow(undefined);
           }
         }}
+        onOpenChange={handleUpdateModalOpen}
         updateModalOpen={updateModalOpen}
-        values={currentRow || {}}
+        values={currentRow}
       />
 
       <Drawer
