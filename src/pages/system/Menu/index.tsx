@@ -195,7 +195,7 @@ const TableList: React.FC = () => {
       title: <FormattedMessage id="pages.searchTable.system.menu.sort" defaultMessage="类型" />,
       dataIndex: 'type',
       render: (_dom, entity) => {
-        if (!entity.path?.startsWith('http')) {
+        if (entity.path?.startsWith('http')) {
           return <Tag color="blue">资源</Tag>;
         } else if (entity.type === 1) {
           return <Tag color="green">目录</Tag>;
