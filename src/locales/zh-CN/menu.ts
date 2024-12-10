@@ -34,9 +34,15 @@ export default {
   'menu.list.search-list.applications': '搜索列表（应用）',
 
   'menu.system': '系统管理',
-  'menu.system.user': '用户管理',
-  'menu.system.menu': '菜单管理',
-  'menu.system.role': '菜单管理',
+  'menu.system.User': '用户管理',
+  'menu.system.Menu': '菜单管理',
+  'menu.system.Role': '角色管理',
+  'menu.system.Profile': '个人主页',
+
+  'menu.ims': 'IMS',
+  'menu.ims.Category': '产品类别',
+  'menu.ims.Supplier': '供应商管理',
+  'menu.ims.Product': '产品管理',
 
   'menu.profile': '详情页',
   'menu.profile.basic': '基础详情页',

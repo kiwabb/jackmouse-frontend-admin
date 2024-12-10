@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 declare namespace API {
-  export type SysMenu = {
+  type SysMenu = {
     /**
      * 主键
      */
@@ -29,7 +29,6 @@ declare namespace API {
      * 菜单访问路径
      */
     path?: null | string;
-    url?: null | string;
     /**
      * 排序
      */

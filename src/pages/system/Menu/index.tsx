@@ -32,8 +32,12 @@ import { treeify } from '@/utils/treeify';
 /**
  * @en-US Add node
  * @zh-CN 添加节点
+ *
+ *
+ *
  * @param fields
  */
+
 const handleAdd = async (fields: API.SysMenu) => {
   const hide = message.loading('正在添加');
   try {
@@ -126,7 +130,7 @@ const TableList: React.FC = () => {
         className: keyword && entity.name?.includes(keyword) ? 'highlight' : '',
       }),
       render: (dom, entity) => {
-        if (entity.url?.startsWith('javascript')) {
+        if (entity.path?.startsWith('javascript')) {
           return (
             <Space size={'small'}>
               <FolderOpenOutlined />
@@ -301,7 +305,9 @@ const TableList: React.FC = () => {
         ]}
         request={async (params) => {
           const menus = await menu(params);
+
           const treeData = treeify(menus, {});
+
           menus.forEach((node) => {
             if (node.children && node.children.length === 0) delete node.children;
           });
@@ -384,8 +390,9 @@ const TableList: React.FC = () => {
           label={'菜单名称'}
           placeholder={'请输入菜单名称'}
         />
-        <ProFormText width="md" name="component" label="组件地址" placeholder="输入组件地址" />
         <ProFormText width="md" name="componentName" label="组件名称" placeholder="输入组件名称" />
+        <ProFormText width="md" name="component" label="组件地址" placeholder="输入组件地址" />
+
         <ProFormText width="md" name="path" label="路由地址" placeholder="输入路由地址" />
         <ProFormText
           rules={[
@@ -419,7 +426,7 @@ const TableList: React.FC = () => {
         />
         <ProFormRadio.Group
           name="type"
-          label="是否为菜单"
+          label="是否为目录"
           width="lg"
           initialValue={1}
           options={[
@@ -432,7 +439,7 @@ const TableList: React.FC = () => {
               value: 2,
             },
           ]}
-          rules={[{ required: true, message: '选择是否为菜单' }]}
+          rules={[{ required: true, message: '选择是否为目录' }]}
         />
         <ProFormDigit
           label="排序号"

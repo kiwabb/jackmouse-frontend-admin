@@ -33,7 +33,7 @@ export async function user(
   },
   options?: { [key: string]: any },
 ) {
-  const data = await request('/server/api/basic-system/sysUser/page', {
+  const data = await request<API.UserList>('/server/api/basic-system/sysUser/page', {
     method: 'GET',
     params: {
       ...params,
@@ -41,13 +41,13 @@ export async function user(
     ...(options || {}),
   });
 
-  const result: API.UserList = {
-    data: data.data.records,
-    total: data.data.totalRow,
-    success: true,
-  };
+  // const result: API.UserList = {
+  //   data: data.data.records,
+  //   total: data.data.totalRow,
+  //   success: true,
+  // };
 
-  return result;
+  return data;
 }
 // --------------------
 

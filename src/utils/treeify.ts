@@ -26,18 +26,25 @@ export function treeify<T>(data: T[], configure: Partial<Configure>): Tree<T>[] 
 
   for (let i = 0; i < data.length; i++) {
     const el: any = data[i];
-    const id = el[config.id];
+    const id = el[config.id]; // el['id']
     const parentId = el[config.parentId];
-
+    // disposable {1:[],2[],}  disposable.1 = []
     if (!(id in disposable)) {
       disposable[id] = [];
     }
+
+    // disposable {1:[],3[],-1[]}  disposable.1 = [] disposable.3 = []
     if (!(parentId in disposable)) {
       disposable[parentId] = [];
     }
-
+    //{id:1,parentId:3,name:用户管理,children:[]}
+    //{id:2,parentId:3,name:菜单管理,children:[]}
+    //{id:3,parentId:-1,name:菜单管理,children:[{id:1,parentId:3,name:用户管理,children:[]},{id:2,parentId:3,name:菜单管理,children:[]}]}
     el.children = disposable[id];
+    // disposable.3 = [{id:1,parentId:3,name:用户管理,children:[]},{id:2,parentId:3,name:菜单管理,children:[]}]
+    // disposable.-1 = {id:3,parentId:-1,name:菜单管理,children:[{id:1,parentId:3,name:用户管理,children:[]},{id:2,parentId:3,name:菜单管理,children:[]}]}
     disposable[parentId].push(el);
+    //roots = [{id:3,parentId:-1,name:菜单管理,children:[{id:1,parentId:3,name:用户管理,children:[]},{id:2,parentId:3,name:菜单管理,children:[]}]}]
     if (parentId === -1) setRoots(el);
   }
   console.log(roots);

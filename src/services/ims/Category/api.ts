@@ -37,3 +37,24 @@ export async function addCategory(options?: { [key: string]: any }): Promise<API
     },
   });
 }
+
+export async function deleteCategory(id: number, options?: { [key: string]: any }) {
+  return await request<API.CategoryListItem>(`${BASE_URL}/api/categories/delete/${id}`, {
+    method: 'DELETE',
+    data: {
+      ...(options || {}),
+    },
+  });
+}
+
+export async function updateCategory(
+  id: number,
+  options?: { [key: string]: any },
+): Promise<API.CategoryListItem> {
+  return request<API.CategoryListItem>(`${BASE_URL}/api/categories/update/${id}`, {
+    method: 'PUT',
+    data: {
+      ...(options || {}),
+    },
+  });
+}

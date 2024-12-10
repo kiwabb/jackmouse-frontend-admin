@@ -22,8 +22,7 @@ import {
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { App, Avatar, Button, Drawer, Form, message, Popconfirm } from 'antd';
 import React, { useRef, useState } from 'react';
-// import type {FormValueType} from './components/UpdateForm';
-// import UpdateForm from './components/UpdateForm';
+
 import { updateUser } from '@/services/system/User/api';
 //import { removeRule } from '@/services/ant-design-pro/api';
 
@@ -113,7 +112,7 @@ const TableList: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.UserListItem>();
+  const [currentRow, setCurrentRow] = useState<API.UserListItem>({});
   //const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([]);
   const [form] = Form.useForm();
 
@@ -142,7 +141,10 @@ const TableList: React.FC = () => {
   // 保存修改
   const handleSave = async (fields: API.UserListItem) => {
     try {
-      await updateUser({ fields });
+      await updateUser({
+        id: (currentRow as API.UserListItem).id,
+        ...fields,
+      });
       message.success('修改成功');
       handleUpdateModalOpen(false);
     } catch (error) {
@@ -196,11 +198,12 @@ const TableList: React.FC = () => {
       sorter: true,
       hideInForm: false,
       render: (dom, entity) => {
-        return !errors[entity.id] ? (
+        const entityId = entity.id!;
+        return !errors[entityId] ? (
           <Avatar
             src={dom}
             alt={entity.nickname?.charAt(0)}
-            onError={() => handleOnError(entity.id)}
+            onError={() => handleOnError(entityId)}
           />
         ) : (
           <Avatar style={{ backgroundColor: '#87d068' }}>{entity.nickname?.charAt(0)}</Avatar>
@@ -281,7 +284,6 @@ const TableList: React.FC = () => {
         },
       },
     },
-
     //行末 操作，编辑和删除
     {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
@@ -459,9 +461,10 @@ const TableList: React.FC = () => {
           modalProps={{
             destroyOnClose: true,
           }}
-          initialValues={currentRow}
-          onFinish={async (record) => {
-            await handleSave(record as API.UserListItem);
+          form={form}
+          onFinish={async (record: API.UserListItem) => {
+            await handleSave(record);
+            console.log(record);
           }}
         >
           <ProFormText
@@ -555,7 +558,7 @@ const TableList: React.FC = () => {
           width={600}
           open={showDetail}
           onClose={() => {
-            setCurrentRow(undefined);
+            // setCurrentRow(undefined);
             setShowDetail(false);
           }}
           closable={false}
