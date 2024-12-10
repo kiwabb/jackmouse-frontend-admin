@@ -210,12 +210,27 @@ const TableList: React.FC = () => {
       tip: '时间',
       // dataFormatter: 'yyyy-MM-dd',
       valueType: 'dateTime',
+      hideInSearch: true,
       fieldProps: {
-        // dateFormatter: (createdAt) =>
-        // {
-        //   return createdAt.format('YYYY-MM-DD HH:mm:ss');
-        // }
+        style: { width: 400 }, // 设置查询选择框的宽度
       },
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      valueType: 'dateTimeRange',
+      hideInTable: true,
+      fieldProps: {
+        style: { width: 400 }, // 设置查询选择框的宽度
+      },
+      // search: {
+      //   transform: (value) => {
+      //     return {
+      //       startTime: value[0],
+      //       endTime: value[1],
+      //     };
+      //   },
+      // },
     },
     // {
     //   title: '时间范围',
@@ -299,6 +314,10 @@ const TableList: React.FC = () => {
         ]}
         request={Product}
         columns={columns}
+        dateFormatter={(value, valueType) => {
+          console.log('====>', value, valueType);
+          return value.format('YYYY-MM-DD HH:mm:ss');
+        }}
       />
 
       {/*新增*/}
