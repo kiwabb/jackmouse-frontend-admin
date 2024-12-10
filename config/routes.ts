@@ -61,19 +61,53 @@ export default [
         redirect: '/system',
       },
       {
-        path: '/system/User',
-        name: 'user',
+        path: '/system/user',
+        name: 'User',
         component: './system/User',
       },
+
       {
-        path: '/system/category',
-        name: 'category',
-        component: './system/Category',
+        path: '/system/role',
+        name: 'Role',
+        component: './system/Role',
       },
       {
-        path: '/system/Menu',
-        name: 'menu',
+        path: '/system/profile',
+        name: 'Profile',
+        component: './system/Profile',
+      },
+      {
+        path: '/system/menu',
+        name: 'Menu',
         component: './system/Menu',
+      },
+    ],
+  },
+  {
+    path: '/ims',
+    name: 'ims',
+    icon: 'crown',
+    access: 'canAdmin',
+    routes: [
+      {
+        path: '/ims',
+        // name: 'IMS',
+        redirect: '/ims',
+      },
+      {
+        path: '/ims/category',
+        name: 'Category',
+        component: './ims/Category',
+      },
+      {
+        path: '/ims/supplier',
+        name: 'Supplier',
+        component: './ims/Supplier',
+      },
+      {
+        path: '/ims/product',
+        name: 'Product',
+        component: './ims/Product',
       },
     ],
   },

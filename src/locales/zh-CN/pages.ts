@@ -51,13 +51,35 @@ export default {
   'pages.searchTable.system.menu': '菜单管理',
 
   // ----------------------------------------------------
+  'pages.searchTable.system.category': '产品分类',
   'pages.searchTable.system.category.categoryLabel': '产品类别',
   'pages.searchTable.system.category.categoryName': '产品名称',
-
   'pages.searchTable.newCategory': '新建类别',
 
   // ----------------------------------------------------
+  'pages.searchTable.system.role': '角色管理',
 
+  'pages.searchTable.system.Role.roleLabel': '角色分类',
+  'pages.searchTable.system.Role.roleName': '角色名称',
+  'pages.searchTable.system.newRole': '新建角色',
+  ' pages.searchTable.system.Role.dataScope': '权限范围',
+  'pages.searchTable.system.Role.enabled': '是否启用',
+  'pages.searchTable.system.Role.code': '角色code',
+  'pages.searchTable.system.Role.able': '启用',
+  'pages.searchTable.system.Role.unable': '禁用',
+  // -----------------------------------------------------------
+  'pages.searchTable.system.profile': '个人主页',
+  'pages.searchTable.system.profile.profileName': '个人主页',
+
+  // ----------------------------------------------------
+  'pages.searchTable.system.Supplier': '供应商管理',
+  'pages.searchTable.system.Supplier.SupplierName': '供应商名称',
+  'pages.searchTable.system.Supplier.SupplierLabel': '供应商',
+  'pages.searchTable.createForm.updateSupplier': '编辑供应商',
+  'pages.searchTable.system.Supplier.Address': '供应商地址',
+  'pages.searchTable.system.Supplier.ContactInfo': '供应商联系方式',
+
+  // ----------------------------------------------------
   'pages.searchTable.updateForm.ruleName.nameLabel': '规则名称',
   'pages.searchTable.updateForm.ruleName.nameRules': '请输入规则名称！',
   'pages.searchTable.updateForm.ruleDesc.descLabel': '规则描述',

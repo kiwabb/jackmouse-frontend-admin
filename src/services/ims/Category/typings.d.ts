@@ -3,7 +3,7 @@
 
 declare namespace API {
   type CategoryListItem = {
-    id?: number | null;
+    id: number;
     name?: string;
     // products?: ProductDTO[] | null;
   };

@@ -125,7 +125,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormRadio.Group
           name="type"
-          label="是否为菜单"
+          label="是否为目录"
           width="lg"
           initialValue={1}
           options={[
@@ -138,7 +138,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               value: 2,
             },
           ]}
-          rules={[{ required: true, message: '选择是否为菜单' }]}
+          rules={[{ required: true, message: '选择是否为目录' }]}
         />
         <ProFormDigit
           label="排序号"
