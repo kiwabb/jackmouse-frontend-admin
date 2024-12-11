@@ -1,4 +1,10 @@
-import { FolderOpenOutlined, MenuOutlined, PlusOutlined, ProfileOutlined } from '@ant-design/icons';
+import {
+  FolderOpenOutlined,
+  MenuOutlined,
+  PlusOutlined,
+  ProfileOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import {
   ActionType,
   ProColumns,
@@ -379,6 +385,12 @@ const TableList: React.FC = () => {
           }}
         />
         <ProFormText
+          fieldProps={{
+            size: 'large',
+            prefix: <UserOutlined />,
+            showCount: true,
+            maxLength: 20,
+          }}
           rules={[
             {
               required: true,

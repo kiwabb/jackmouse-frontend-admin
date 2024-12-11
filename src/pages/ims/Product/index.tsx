@@ -211,12 +211,7 @@ const TableList: React.FC = () => {
       // dataFormatter: 'yyyy-MM-dd',
       valueType: 'dateTime',
       hideInSearch: true,
-      fieldProps: {
-        // dateFormatter: (createdAt) =>
-        // {
-        //   return createdAt.format('YYYY-MM-DD HH:mm:ss');
-        // }
-      },
+      fieldProps: {},
     },
     {
       title: '时间范围',
@@ -229,6 +224,7 @@ const TableList: React.FC = () => {
 
       valueType: 'dateTimeRange',
       fieldProps: {
+        style: { width: 400 }, // 设置查询选择框的宽度
         // placeholder: ['1', '2']
       },
       renderFormItem: (_, { type, defaultRender }) => {
@@ -241,7 +237,6 @@ const TableList: React.FC = () => {
 
     {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
-
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
@@ -276,23 +271,6 @@ const TableList: React.FC = () => {
             }}
           >
             <FormattedMessage id="pages.searchTable.deletion" defaultMessage="deletion" />
-          </a>
-        </Popconfirm>,
-
-        <Popconfirm
-          onConfirm={handleProductDelete} // 包裹为箭头函数
-          // onCancel={() => setOpen(false)}
-          key={record.id}
-          placement="topLeft"
-          title={'复制'}
-          // open={open}
-          description={'是否复制'}
-          okText="是"
-          cancelText="否"
-          okButtonProps={{ loading: loading }}
-        >
-          <a key="id" onClick={() => {}}>
-            复制
           </a>
         </Popconfirm>,
       ],
