@@ -6,10 +6,12 @@ import { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
 import React from 'react';
+import { getUser, signinRedirect, signinRedirectCallback } from '@/services/ant-design-pro/auth';
+
 const isDev = process.env.NODE_ENV === 'development';
-const loginPath = '/User/login';
+const signinRedirectCallbackPath = '/signin-redirect-callback';
+const consolePath = '/welcome';
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -22,28 +24,41 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser({
-        skipErrorHandler: true,
-      });
-      return msg.data;
+      let user;
+      if (history.location.pathname === signinRedirectCallbackPath) {
+        user = await signinRedirectCallback();
+      } else {
+        user = await getUser();
+      }
+
+      console.log('getUser', user);
+      if (user) {
+        localStorage.setItem('token', user.access_token);
+      }
+
+      return user;
     } catch (error) {
-      history.push(loginPath);
+      console.log('error:', error);
+      signinRedirect();
     }
     return undefined;
   };
-  // 如果不是登录页面，执行
-  const { location } = history;
-  if (location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+
+  const currentUser = await fetchUserInfo();
+  console.log('currentUser', currentUser);
+  if (currentUser) {
+    history.push(consolePath);
     return {
       fetchUserInfo,
       currentUser,
-      settings: defaultSettings as Partial<LayoutSettings>,
+      settings: defaultSettings,
     };
   }
+  console.log('error');
+  //history.push('401');
   return {
     fetchUserInfo,
-    settings: defaultSettings as Partial<LayoutSettings>,
+    settings: defaultSettings,
   };
 }
 
@@ -63,10 +78,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
-        history.push(loginPath);
+      if (!initialState?.currentUser) {
+        signinRedirect();
       }
     },
     bgLayoutImgList: [

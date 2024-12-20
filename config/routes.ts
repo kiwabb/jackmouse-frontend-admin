@@ -22,6 +22,7 @@ export default [
       },
     ],
   },
+
   {
     path: '/welcome',
     name: 'welcome',

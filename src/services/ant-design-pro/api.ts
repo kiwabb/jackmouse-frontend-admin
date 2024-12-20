@@ -6,9 +6,11 @@ import { request } from '@umijs/max';
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>('/api/currentUser', {
+  }>('/server/api/userinfo', {
     method: 'GET',
-    ...(options || {}),
+    ...(options || {
+      withCredentials: true,
+    }),
   });
 }
 
