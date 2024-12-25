@@ -16,7 +16,7 @@ declare namespace API {
      * 是否隐藏
      */
     hidden: boolean;
-
+    icon: string;
     /**
      * 菜单名称
      */
@@ -28,7 +28,7 @@ declare namespace API {
     /**
      * 菜单访问路径
      */
-    path?: null | string;
+    path?: string;
     /**
      * 排序
      */

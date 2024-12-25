@@ -27,7 +27,7 @@ declare namespace API {
     /**
      * 用户昵称
      */
-    nickname?: null | string;
+    nickname?: string;
     /**
      * 登录密码
      */
@@ -44,6 +44,8 @@ declare namespace API {
      * 用户类型
      */
     type?: number | string;
+    menuList?: API.SysMenu[];
+    roleLost?: API.RuleListItem[];
     createBy?: number | null;
     createTime?: null | string;
     updateBy?: number | null;

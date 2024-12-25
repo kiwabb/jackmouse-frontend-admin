@@ -1,6 +1,7 @@
 ﻿import type { RequestOptions } from '@@/plugin-request/request';
 import type { RequestConfig } from '@umijs/max';
 import { message, notification } from 'antd';
+import { signinRedirect } from '@/services/ant-design-pro/auth';
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -18,7 +19,6 @@ interface ResponseStructure {
   errorMessage?: string;
   showType?: ErrorShowType;
 }
-
 /**
  * @name 错误处理
  * pro 自带的错误处理， 可以在这里做自己的改动
@@ -29,6 +29,7 @@ export const errorConfig: RequestConfig = {
   errorConfig: {
     // 错误抛出
     errorThrower: (res) => {
+      console.log('res', res);
       const { success, data, errorCode, errorMessage, showType } =
         res as unknown as ResponseStructure;
       if (!success) {
@@ -40,6 +41,12 @@ export const errorConfig: RequestConfig = {
     },
     // 错误接收及处理
     errorHandler: (error: any, opts: any) => {
+      console.log('res', error);
+      if (error.response.status === 401) {
+        signinRedirect();
+        return;
+      }
+
       if (opts?.skipErrorHandler) throw error;
       // 我们的 errorThrower 抛出的错误。
       if (error.name === 'BizError') {
@@ -89,8 +96,8 @@ export const errorConfig: RequestConfig = {
   requestInterceptors: [
     (config: RequestOptions) => {
       // 拦截请求配置，进行个性化处理。
-      const url = config?.url?.concat('?token = 123');
-      return { ...config, url };
+      config.headers!['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+      return { ...config };
     },
   ],
 
@@ -99,7 +106,7 @@ export const errorConfig: RequestConfig = {
     (response) => {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as ResponseStructure;
-
+      console.log('status', response.status);
       if (data?.success === false) {
         message.error('请求失败！');
       }
