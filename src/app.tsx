@@ -1,6 +1,6 @@
 import { Footer, Question, SelectLang, AvatarDropdown, AvatarName } from '@/components';
-import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { CrownOutlined, HeartOutlined, LinkOutlined, SmileOutlined } from '@ant-design/icons';
+import type { MenuDataItem, Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
@@ -8,6 +8,8 @@ import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
 import React from 'react';
 import { getUser, signinRedirect, signinRedirectCallback } from '@/services/ant-design-pro/auth';
+import { queryCurrentUser } from '@/services/system/User/api';
+import { treeify } from '@/utils/treeify';
 
 const isDev = process.env.NODE_ENV === 'development';
 const signinRedirectCallbackPath = '/signin-redirect-callback';
@@ -35,8 +37,9 @@ export async function getInitialState(): Promise<{
       if (user) {
         localStorage.setItem('token', user.access_token);
       }
-
-      return user;
+      let { data: userInfo } = await queryCurrentUser();
+      userInfo.name = userInfo.nickname;
+      return userInfo;
     } catch (error) {
       console.log('error:', error);
       signinRedirect();
@@ -44,21 +47,22 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
 
-  const currentUser = await fetchUserInfo();
+  let currentUser = await fetchUserInfo();
   console.log('currentUser', currentUser);
   if (currentUser) {
+    console.log('currentUser', currentUser);
     history.push(consolePath);
     return {
       fetchUserInfo,
       currentUser,
-      settings: defaultSettings,
+      settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
   console.log('error');
-  //history.push('401');
+  history.push('401');
   return {
     fetchUserInfo,
-    settings: defaultSettings,
+    settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
 
@@ -67,14 +71,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
     avatarProps: {
-      src: initialState?.currentUser?.avatar,
+      src: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
       title: <AvatarName />,
       render: (_, avatarChildren) => {
         return <AvatarDropdown>{avatarChildren}</AvatarDropdown>;
       },
     },
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.nickname,
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
@@ -112,6 +116,34 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         ]
       : [],
     menuHeaderRender: undefined,
+    menu: {
+      request: async () => {
+        const IconMap = {
+          smile: <SmileOutlined />,
+          heart: <HeartOutlined />,
+          crown: <CrownOutlined />,
+        };
+        const menuList: MenuDataItem[] = [];
+        const menuData = initialState?.currentUser?.menuList;
+        if (menuData) {
+          menuData.forEach((item) => {
+            let menu: MenuDataItem = {
+              path: item.path,
+              name: item.name,
+              icon: item.icon && IconMap[item.icon as 'smile'],
+              key: item.id + '',
+              locale: false,
+              type: item.type,
+              id: item.id,
+              parentId: item.parentId,
+            };
+            menuList.push(menu);
+          });
+          return treeify(menuList, {});
+        }
+        return menuList;
+      },
+    },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态

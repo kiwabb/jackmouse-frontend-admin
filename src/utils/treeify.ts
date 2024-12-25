@@ -1,6 +1,8 @@
 type Configure = {
   id: string;
   parentId: string;
+  rootField: string;
+  rootId: number;
 };
 
 type Tree<T> = T & {
@@ -12,6 +14,8 @@ export function treeify<T>(data: T[], configure: Partial<Configure>): Tree<T>[] 
     {
       id: 'id',
       parentId: 'parentId',
+      rootField: 'parentId',
+      rootId: -1,
     },
     configure,
   );
@@ -23,9 +27,10 @@ export function treeify<T>(data: T[], configure: Partial<Configure>): Tree<T>[] 
   const setRoots = (el: Tree<T>) => {
     roots.push(el);
   };
-
+  console.log('data', data);
   for (let i = 0; i < data.length; i++) {
     const el: any = data[i];
+    console.log('el', el);
     const id = el[config.id]; // el['id']
     const parentId = el[config.parentId];
     // disposable {1:[],2[],}  disposable.1 = []
@@ -45,9 +50,10 @@ export function treeify<T>(data: T[], configure: Partial<Configure>): Tree<T>[] 
     // disposable.-1 = {id:3,parentId:-1,name:菜单管理,children:[{id:1,parentId:3,name:用户管理,children:[]},{id:2,parentId:3,name:菜单管理,children:[]}]}
     disposable[parentId].push(el);
     //roots = [{id:3,parentId:-1,name:菜单管理,children:[{id:1,parentId:3,name:用户管理,children:[]},{id:2,parentId:3,name:菜单管理,children:[]}]}]
-    if (parentId === -1) setRoots(el);
+    if (el[config.rootField] === config.rootId) setRoots(el);
   }
-  console.log(roots);
+  console.log('roots', roots);
+  console.log('disposable', disposable);
 
   return roots;
 }

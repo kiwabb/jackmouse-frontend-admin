@@ -37,7 +37,7 @@ export default [
     routes: [
       {
         path: '/admin',
-        redirect: '/admin/sub-page',
+        redirect: '//adminsub-page',
       },
       {
         path: '/admin/first-page',
