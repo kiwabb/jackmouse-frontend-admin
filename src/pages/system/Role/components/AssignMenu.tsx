@@ -9,7 +9,7 @@ type AssignAuthProps = {
   onOpenChange: (value: ((prevState: boolean) => boolean) | boolean) => void;
 };
 
-const AssignAuth: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) => {
+const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) => {
   const [treeData, setTreeData] = useState<TreeDataNode[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<(number | string | bigint)[]>([]);
   useEffect(() => {
@@ -76,4 +76,4 @@ const AssignAuth: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) =
   );
 };
 
-export default AssignAuth;
+export default AssignMenu;

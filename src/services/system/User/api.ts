@@ -41,14 +41,74 @@ export async function user(
     ...(options || {}),
   });
 
-  // const result: API.UserList = {
-  //   data: data.data.records,
-  //   total: data.data.totalRow,
-  //   success: true,
-  // };
-
   return data;
 }
+
+/** 获取未分配角色userid 的用户列表  */
+export async function selectUnAssignUser(
+  params: {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  options?: { [key: string]: any },
+) {
+  return await request<API.PageResult<API.UserListItem>>(
+    `/server/api/basic-system/sysUser/getUnAssignUser`,
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    },
+  );
+}
+
+/** 获取已分配角色userid 的用户列表  */
+export async function selectAssignUser(
+  params: {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  options?: { [key: string]: any },
+) {
+  return await request<API.PageResult<API.UserListItem>>(
+    `/server/api/basic-system/sysUser/getAssignUser`,
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    },
+  );
+}
+
+export async function assignUser(assignMenu: API.AssignUser, options?: { [key: string]: any }) {
+  return await request<API.Result<API.SysMenu[]>>(`/server/api/basic-system/sysUser/assignUser`, {
+    method: 'POST',
+    data: assignMenu,
+    ...(options || {}),
+  });
+}
+
+export async function deleteRoleUser(assignMenu: API.AssignUser, options?: { [key: string]: any }) {
+  return await request<API.Result<API.SysMenu[]>>(
+    `/server/api/basic-system/sysUser/deleteRoleUser`,
+    {
+      method: 'DELETE',
+      data: assignMenu,
+      ...(options || {}),
+    },
+  );
+}
+
 // --------------------
 
 /** 更新用户 PUT /api/User */

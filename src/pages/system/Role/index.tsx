@@ -12,7 +12,8 @@ import {
 import { Button, Form, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { addRole, deleteRole, oneRole, role, updateRole } from '@/services/system/Role/api';
-import AssignAuth from '@/pages/system/Role/components/AssignAuth';
+import AssignMenu from '@/pages/system/Role/components/AssignMenu';
+import AssignUser from '@/pages/system/Role/components/AssignUser';
 
 const TableList: React.FC = () => {
   const actionRef = useRef<ActionType>();
@@ -21,8 +22,11 @@ const TableList: React.FC = () => {
   const [openEditRole, setOpenEditRole] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const [menuRoleId, setMenuRoleId] = useState<number>();
+  const [userRoleId, setUserRoleId] = useState<number>();
 
-  const [assignAuth, setAssignAuth] = useState<boolean>(false);
+  const [assignMenu, setAssignMenu] = useState<boolean>(false);
+  const [assignUser, setAssignUser] = useState<boolean>(false);
 
   const handleAddRole = async (file: API.SysRoleItem) => {
     const hide = message.loading('正在添加');
@@ -164,13 +168,22 @@ const TableList: React.FC = () => {
           </a>
         </Popconfirm>,
         <a
-          key={'assignAuth-' + record.id}
+          key={'assignMenu-' + record.id}
           onClick={() => {
-            setCurrentRow(record);
-            setAssignAuth(true);
+            setMenuRoleId(record.id);
+            setAssignMenu(true);
           }}
         >
-          <FormattedMessage id="pages.searchTable.assignAuth" defaultMessage="分配权限" />
+          <FormattedMessage id="pages.searchTable.assignMenu" defaultMessage="分配菜单" />
+        </a>,
+        <a
+          key={'assignUser-' + record.id}
+          onClick={() => {
+            setUserRoleId(record.id);
+            setAssignUser(true);
+          }}
+        >
+          <FormattedMessage id="pages.searchTable.assignUser" defaultMessage="分配角色" />
         </a>,
       ],
     },
@@ -307,7 +320,8 @@ const TableList: React.FC = () => {
           ]}
         />
       </ModalForm>
-      <AssignAuth open={assignAuth} onOpenChange={setAssignAuth} roleId={currentRow?.id} />
+      <AssignMenu open={assignMenu} onOpenChange={setAssignMenu} roleId={menuRoleId} />
+      <AssignUser open={assignUser} onOpenChange={setAssignUser} roleId={userRoleId} />
     </PageContainer>
   );
 };

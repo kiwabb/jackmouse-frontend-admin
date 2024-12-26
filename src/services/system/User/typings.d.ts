@@ -57,4 +57,9 @@ declare namespace API {
     total?: number;
     success?: boolean;
   };
+
+  type AssignUser = {
+    roleId?: number;
+    userIds: (number | string | bigint)[];
+  };
 }
