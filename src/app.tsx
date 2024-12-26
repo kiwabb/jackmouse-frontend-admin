@@ -13,8 +13,6 @@ import { treeify } from '@/utils/treeify';
 
 const isDev = process.env.NODE_ENV === 'development';
 const signinRedirectCallbackPath = '/signin-redirect-callback';
-const consolePath = '/welcome';
-
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
@@ -48,10 +46,8 @@ export async function getInitialState(): Promise<{
   };
 
   let currentUser = await fetchUserInfo();
-  console.log('currentUser', currentUser);
   if (currentUser) {
     console.log('currentUser', currentUser);
-    history.push(consolePath);
     return {
       fetchUserInfo,
       currentUser,

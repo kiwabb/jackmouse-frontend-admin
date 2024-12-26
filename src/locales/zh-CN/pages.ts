@@ -107,6 +107,7 @@ export default {
   'pages.searchTable.edit': '编辑',
   'pages.searchTable.batchDeletion': '批量删除',
   'pages.searchTable.deletion': '删除',
+  'pages.searchTable.assignAuth': '分配权限',
 
   'pages.searchTable.subscribeAlert': '订阅警报',
   'pages.searchTable.title': '查询表格',

@@ -30,7 +30,6 @@ export async function oneRole(id?: number, options?: Record<string, any>) {
       ...(options || {}),
     },
   );
-
   return data;
 }
 

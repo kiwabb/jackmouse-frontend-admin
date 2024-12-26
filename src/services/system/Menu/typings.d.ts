@@ -3,6 +3,7 @@
 
 declare namespace API {
   type SysMenu = {
+    checked: boolean;
     /**
      * 主键
      */
@@ -42,5 +43,10 @@ declare namespace API {
     createBy?: number | null;
     createTime?: null | string;
     children?: Menu[];
+  };
+
+  type AssignMenu = {
+    roleId?: number;
+    menuIds: (number | string | bigint)[];
   };
 }
