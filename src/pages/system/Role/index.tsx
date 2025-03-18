@@ -97,11 +97,12 @@ const TableList: React.FC = () => {
       ),
       //search: true,只有不需要展示的时候需要写search：false
       //接口字段名
+      hideInSearch: true,
       dataIndex: 'dataScope',
       tip: '数据权限范围',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.Role.code" defaultMessage="角色code" />,
+      title: <FormattedMessage id="pages.searchTable.system.Role.code" defaultMessage="角色编码" />,
 
       //接口字段名
       dataIndex: 'code',
@@ -282,8 +283,7 @@ const TableList: React.FC = () => {
           destroyOnClose: true,
         }}
         onFinish={async (record: API.SysRoleItem) => {
-          console.log(record);
-          await handleRoleEdit(record);
+          await handleRoleEdit({ ...currentRow, ...record });
         }}
       >
         <ProFormText

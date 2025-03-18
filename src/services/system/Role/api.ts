@@ -13,7 +13,7 @@ export async function role(
   },
   options?: { [key: string]: any },
 ) {
-  return await request<API.SysRoleList>('/server/api/basic-system/sysRole/page', {
+  return await request<API.SysRoleList>('/server/api/admin/Role/page', {
     method: 'GET',
     params: {
       ...params,
@@ -23,20 +23,17 @@ export async function role(
 }
 
 export async function oneRole(id?: number, options?: Record<string, any>) {
-  const { data } = await request<API.SysRoleItem>(
-    `/server/api/basic-system/sysRole/getInfo/${id}`,
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
+  const { data } = await request<API.SysRoleItem>(`/server/api/admin/Role/${id}`, {
+    method: 'GET',
+    ...(options || {}),
+  });
   return data;
 }
 
 /** 增role列表 POST /sysRole/save*/
 
 export async function addRole(options?: { [key: string]: any }) {
-  return await request<API.SysRoleItem>('/server/api/basic-system/sysRole/save', {
+  return await request<API.SysRoleItem>('/server/api/admin/Role', {
     method: 'POST',
     data: {
       method: 'post',
@@ -54,10 +51,11 @@ export async function deleteRole(
   id?: number,
   options?: Record<string, any>,
 ) {
-  return await request<API.SysRoleItem>(`/server/api/basic-system/sysRole/remove/${id}`, {
+  return await request<API.SysRoleItem>(`/server/api/admin/Role`, {
     method: 'DELETE',
 
     data: {
+      ids: [id],
       ...(options || {}),
     },
   });
@@ -65,7 +63,7 @@ export async function deleteRole(
 
 /** 改role列表  改： /sysRole/update */
 export async function updateRole(options?: { [key: string]: any }) {
-  return await request<API.SysRoleItem>(`/server/api/basic-system/sysRole/update`, {
+  return await request<API.SysRoleItem>(`/server/api/admin/Role`, {
     method: 'PUT',
     data: {
       method: 'PUT',
