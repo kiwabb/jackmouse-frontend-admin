@@ -142,5 +142,5 @@ export async function removeUser(id: number | undefined, options?: Record<string
 }
 
 export async function queryCurrentUser(options?: { [key: string]: any }) {
-  return request<API.Result<API.CurrentUser>>('/server/api/basic-system/sysUser/current');
+  return request<API.Result<API.CurrentUser>>('/api/currentUser');
 }
