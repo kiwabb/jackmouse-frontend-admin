@@ -6,7 +6,7 @@ declare namespace API {
     /**
      * 主键
      */
-    id?: number;
+    id: number;
     /**
      * 头像
      */
@@ -15,7 +15,7 @@ declare namespace API {
     /**
      * 邮箱
      */
-    email?: number | string;
+    email: string;
     /**
      * 是否可用
      */
@@ -35,21 +35,21 @@ declare namespace API {
     /**
      * 手机号
      */
-    phone?: null | string;
+    mobile: string;
     /**
      * 性别
      */
-    sex?: number | string | null;
+    sex: 'MALE' | 'FEMALE' | 'UNKNOWN';
     /**
      * 用户类型
      */
-    type?: number | string;
+    userType: 'ADMIN' | 'USER';
     menuList?: API.SysMenu[];
     roleLost?: API.RuleListItem[];
     createBy?: number | null;
-    createTime?: null | string;
+    createdAt?: null | string;
     updateBy?: number | null;
-    updateTime?: null | string;
+    updatedAt?: null | string;
   };
   type UserList = {
     data?: UserListItem[];

@@ -33,7 +33,7 @@ export async function user(
   },
   options?: { [key: string]: any },
 ) {
-  const data = await request<API.UserList>('/server/api/basic-system/sysUser/page', {
+  const data = await request<API.UserList>('/server/api/admin/user/page', {
     method: 'GET',
     params: {
       ...params,
@@ -41,6 +41,16 @@ export async function user(
     ...(options || {}),
   });
 
+  return data;
+}
+
+export async function getDetails(id?: number, options?: { [key: string]: any }) {
+  const { data } = await request<API.Result<API.UserListItem>>(`/server/api/admin/user/${id}`, {
+    method: 'GET',
+    params: {
+      ...options,
+    },
+  });
   return data;
 }
 
@@ -112,19 +122,16 @@ export async function deleteRoleUser(assignMenu: API.AssignUser, options?: { [ke
 // --------------------
 
 /** 更新用户 PUT /api/User */
-export async function updateUser(options?: { [key: string]: any }) {
-  return request<API.UserListItem>('/server/api/basic-system/sysUser/update', {
+export async function updateUser(data?: { [key: string]: any }) {
+  return request<API.UserListItem>('/server/api/admin/user', {
     method: 'PUT',
-    data: {
-      method: 'update',
-      ...(options || {}),
-    },
+    data,
   });
 }
 
 /** 新建用户 POST /api/User */
 export async function addUser(options?: { [key: string]: any }) {
-  return request<API.UserListItem>('/server/api/basic-system/sysUser/save', {
+  return request<API.UserListItem>('/server/api/admin/user', {
     method: 'POST',
     data: {
       method: 'post',
@@ -135,8 +142,11 @@ export async function addUser(options?: { [key: string]: any }) {
 
 /** 删除用户 DELETE /api/rule */
 export async function removeUser(id: number | undefined, options?: Record<string, any>) {
-  return request<Record<string, any>>(`/server/api/basic-system/sysUser/remove/${id}`, {
+  return request<Record<string, any>>(`/server/api/admin/user`, {
     method: 'DELETE',
+    data: {
+      ids: [id],
+    },
     ...(options || {}),
   });
 }

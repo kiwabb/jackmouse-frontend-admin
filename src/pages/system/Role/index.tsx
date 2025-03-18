@@ -280,7 +280,6 @@ const TableList: React.FC = () => {
         width="400px"
         modalProps={{
           destroyOnClose: true,
-          onCancel: () => console.log('关闭弹窗'),
         }}
         onFinish={async (record: API.SysRoleItem) => {
           console.log(record);
