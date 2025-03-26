@@ -33,18 +33,21 @@ export async function menu(
   },
   options?: { [key: string]: any },
 ) {
-  const { data } = await request<API.Page<API.SysMenu>>('/server/api/basic-system/sysMenu/list', {
-    method: 'GET',
-    params: {
-      ...params,
+  const { data } = await request<API.PageResult<API.SysMenu>>(
+    '/server/api/basic-system/sysMenu/list',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
     },
-    ...(options || {}),
-  });
+  );
   return data;
 }
 
 export async function menuTypeOne(options?: Record<string, any>) {
-  const { data } = await request<API.Page<API.SysMenu>>(
+  const { data } = await request<API.PageResult<API.SysMenu>>(
     `/server/api/basic-system/sysMenu/menuTypeOne`,
     {
       method: 'GET',
@@ -52,6 +55,24 @@ export async function menuTypeOne(options?: Record<string, any>) {
     },
   );
   return data;
+}
+
+export async function getMenuByRoleId(id?: number, options?: Record<string, any>) {
+  return await request<API.Result<API.SysMenu[]>>(
+    `/server/api/basic-system/sysMenu/getMenuByRoleId/${id}`,
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
+}
+
+export async function assignMenu(assignMenu: API.AssignMenu, options?: { [key: string]: any }) {
+  return await request<API.Result<API.SysMenu[]>>(`/server/api/basic-system/sysMenu/assignMenu`, {
+    method: 'POST',
+    data: assignMenu,
+    ...(options || {}),
+  });
 }
 export async function menuById(id: number, options?: { [key: string]: any }) {
   const { data } = await request<API.Result<API.SysMenu>>(

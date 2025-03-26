@@ -4,7 +4,7 @@
 类型data结构校验：services/system/typing: UserListItem、UserList
 */
 
-import { addUser, removeUser, user } from '@/services/system/User/api';
+import { addUser, getDetails, removeUser, user } from '@/services/system/User/api';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   ActionType,
@@ -112,7 +112,7 @@ const TableList: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.UserListItem>({});
+  const [currentRow, setCurrentRow] = useState<API.UserListItem>();
   //const [selectedRowsState, setSelectedRows] = useState<API.UserListItem[]>([]);
   const [form] = Form.useForm();
 
@@ -123,9 +123,9 @@ const TableList: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     setConfirmLoading(true);
-    removeUser(currentRow?.id);
+    await removeUser(currentRow?.id);
     // setOpen(false);
     setConfirmLoading(false);
     actionRef.current?.reloadAndRest?.();
@@ -141,10 +141,7 @@ const TableList: React.FC = () => {
   // 保存修改
   const handleSave = async (fields: API.UserListItem) => {
     try {
-      await updateUser({
-        id: (currentRow as API.UserListItem).id,
-        ...fields,
-      });
+      await updateUser({ ...currentRow, ...fields });
       message.success('修改成功');
       handleUpdateModalOpen(false);
     } catch (error) {
@@ -170,7 +167,6 @@ const TableList: React.FC = () => {
       //tooltip: 'user name',//会在 title 之后展示一个 icon，hover 之后提示一些信息
       //ellipsis: false,//	是否自动缩略
       dataIndex: 'username',
-      tip: 'The User name is the unique key',
       render: (dom, entity) => {
         return (
           <a
@@ -185,17 +181,10 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: (
-        <FormattedMessage id="pages.searchTable.system.user.nickname" defaultMessage="nickname" />
-      ),
-      dataIndex: 'nickname',
-      sorter: true,
-      hideInForm: true,
-    },
-    {
       title: <FormattedMessage id="pages.searchTable.system.user.avatar" defaultMessage="avatar" />,
       dataIndex: 'avatar',
       sorter: true,
+      hideInSearch: true,
       hideInForm: false,
       render: (dom, entity) => {
         const entityId = entity.id!;
@@ -212,9 +201,8 @@ const TableList: React.FC = () => {
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.phone" defaultMessage="phone" />,
-      dataIndex: 'phone',
+      dataIndex: 'mobile',
       sorter: true,
-      hideInForm: true,
     },
     {
       title: <FormattedMessage id="pages.searchTable.system.user.email" defaultMessage="email" />,
@@ -226,63 +214,99 @@ const TableList: React.FC = () => {
       title: <FormattedMessage id="pages.searchTable.system.user.sex" defaultMessage="sex" />,
       dataIndex: 'sex',
       sorter: true,
+      hideInSearch: true,
       hideInForm: true,
       valueEnum: {
-        0: {
+        MALE: {
           text: <FormattedMessage id="pages.searchTable.system.user.sex.boy" defaultMessage="男" />,
           status: '男',
         },
-        1: {
+        FEMALE: {
           text: (
             <FormattedMessage id="pages.searchTable.system.user.sex.girl" defaultMessage="女" />
           ),
           status: '女',
         },
+        UNKNOWN: {
+          text: (
+            <FormattedMessage
+              id="pages.searchTable.system.user.sex.unknown"
+              defaultMessage="未知"
+            />
+          ),
+          status: '未知',
+        },
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.user.enable" defaultMessage="状态" />,
-      dataIndex: 'enabled',
+      title: <FormattedMessage id="pages.searchTable.system.user.status" defaultMessage="状态" />,
+      dataIndex: 'status',
       sorter: true,
       hideInForm: true,
       valueEnum: {
-        0: {
-          text: <FormattedMessage id="pages.searchTable.system.user.able" defaultMessage="正常" />,
+        NORMAL: {
+          text: (
+            <FormattedMessage
+              id="pages.searchTable.system.user.status.normal"
+              defaultMessage="正常"
+            />
+          ),
           status: '正常',
         },
-        1: {
+      },
+    },
+    {
+      title: (
+        <FormattedMessage id="pages.searchTable.system.user.userType" defaultMessage="用户类型" />
+      ),
+      dataIndex: 'userType',
+      sorter: true,
+      hideInForm: true,
+      valueEnum: {
+        SUPER_ADMIN: {
           text: (
-            <FormattedMessage id="pages.searchTable.system.user.unable" defaultMessage="禁用" />
+            <FormattedMessage
+              id="pages.searchTable.system.user.userType.superAdmin"
+              defaultMessage="超级管理员"
+            />
           ),
-          status: '禁用',
+          status: '超级管理员',
+        },
+        ADMIN: {
+          text: (
+            <FormattedMessage
+              id="pages.searchTable.system.user.userType.admin"
+              defaultMessage="管理员"
+            />
+          ),
+          status: '管理员',
+        },
+        USER: {
+          text: (
+            <FormattedMessage
+              id="pages.searchTable.system.user.userType.user"
+              defaultMessage="普通用户"
+            />
+          ),
+          status: '普通用户',
         },
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.user.type" defaultMessage="类型" />,
-      dataIndex: 'type',
+      title: <FormattedMessage id="pages.createdAt" defaultMessage={'创建时间'} />,
+      dataIndex: 'createdAt',
+      valueType: 'dateTime',
+      width: 160,
+      hideInSearch: true,
       sorter: true,
-      hideInForm: true,
-      valueEnum: {
-        1: {
-          text: (
-            <FormattedMessage id="pages.searchTable.system.user.type1" defaultMessage="类型1" />
-          ),
-          status: '类型1',
-        },
-        2: {
-          text: (
-            <FormattedMessage id="pages.searchTable.system.user.type2" defaultMessage="类型2" />
-          ),
-          status: '类型2',
-        },
-        3: {
-          text: (
-            <FormattedMessage id="pages.searchTable.system.user.type3" defaultMessage="类型3" />
-          ),
-          status: '类型3',
-        },
-      },
+    },
+    {
+      title: <FormattedMessage id="pages.updatedAt" defaultMessage={'修改时间'} />,
+      dataIndex: 'updatedAt',
+      valueType: 'dateTime',
+      width: 160,
+      hideInSearch: true,
+      sorter: true,
     },
     //行末 操作，编辑和删除
     {
@@ -292,11 +316,12 @@ const TableList: React.FC = () => {
       render: (_, record) => [
         // 编辑
         <a
-          key={record.id}
+          key={'edit' + record.id}
           onClick={() => {
-            setCurrentRow(record);
-            handleConfirmEdit(record);
-            console.log(record);
+            getDetails(record.id).then((res) => {
+              setCurrentRow(res);
+              handleConfirmEdit(record);
+            });
           }}
         >
           <FormattedMessage id="pages.searchTable.edit" defaultMessage="edit" />
@@ -304,7 +329,7 @@ const TableList: React.FC = () => {
         <Popconfirm
           onConfirm={handleConfirmDelete}
           // onCancel={() => setOpen(false)}
-          key={record.id}
+          key={'delete' + record.id}
           placement="topLeft"
           title={'删除'}
           // open={open}
@@ -332,7 +357,7 @@ const TableList: React.FC = () => {
         <ProTable<API.UserListItem, API.PageParams>
           headerTitle={intl.formatMessage({
             id: 'pages.searchTable.title',
-            defaultMessage: 'Enquiry form',
+            defaultMessage: '查询表格',
           })}
           actionRef={actionRef}
           rowKey="key"
@@ -387,64 +412,58 @@ const TableList: React.FC = () => {
             width="md"
             name="username"
             label="用户名称"
-            tooltip="最长为 24 位"
+            rules={[{ required: true, max: 24 }]}
             placeholder="请输入名称"
           />
-
-          <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
-          {/*新增时 头像默认 后续用户修改*/}
           {/*<ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />*/}
-          <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
-          <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
+          <ProFormText
+            width="md"
+            name="mobile"
+            label="手机号"
+            placeholder="请输入手机号"
+            rules={[{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }]}
+          />
+          <ProFormText
+            width="md"
+            name="email"
+            label="邮箱"
+            placeholder="请输入邮箱"
+            rules={[{ type: 'email' }]}
+          />
           <ProFormSelect
             width="md"
             options={[
               {
-                value: '0',
+                value: 'MALE',
                 label: '男',
               },
               {
-                value: '1',
+                value: 'FEMALE',
                 label: '女',
+              },
+              {
+                value: 'UNKNOWN',
+                label: '未知',
               },
             ]}
             name="sex"
             label="性别"
           />
-          <ProFormSelect
-            width="md"
-            options={[
-              {
-                value: '0',
-                label: '正常',
-              },
-              {
-                value: '1',
-                label: '禁用',
-              },
-            ]}
-            name="enabled"
-            label="状态"
-          />
 
           <ProFormSelect
             width="md"
             options={[
               {
-                value: '1',
-                label: '类型1',
+                value: 'ADMIN',
+                label: '管理员',
               },
               {
-                value: '2',
-                label: '类型2',
-              },
-              {
-                value: '3',
-                label: '类型3',
+                value: 'NORMAL',
+                label: '用户',
               },
             ]}
-            name="type"
-            label="类型"
+            name="userType"
+            label="用户类型"
           />
         </ModalForm>
 
@@ -455,6 +474,7 @@ const TableList: React.FC = () => {
             id: 'pages.searchTable.createForm.updateUser',
             defaultMessage: 'New User',
           })}
+          initialValues={currentRow}
           width="400px"
           open={updateModalOpen}
           onOpenChange={handleUpdateModalOpen}
@@ -463,96 +483,69 @@ const TableList: React.FC = () => {
           }}
           form={form}
           onFinish={async (record: API.UserListItem) => {
-            await handleSave(record);
             console.log(record);
+            await handleSave(record);
           }}
         >
           <ProFormText
             width="md"
             name="username"
             label="用户名称"
-            tooltip="最长为 24 位"
+            rules={[{ required: true, max: 24 }]}
             placeholder="请输入名称"
-            disabled
           />
 
-          <ProFormText width="md" name="nickname" label="昵称" placeholder="请输入昵称" />
           {/*<ProFormText width="md" name="avatar" label="头像" placeholder="请输入头像" />*/}
-          <ProFormText width="md" name="phone" label="手机号" placeholder="请输入手机号" />
-          <ProFormText width="md" name="email" label="邮箱" placeholder="请输入邮箱" />
+          <ProFormText
+            width="md"
+            name="mobile"
+            label="手机号"
+            placeholder="请输入手机号"
+            rules={[{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }]}
+          />
+          <ProFormText
+            width="md"
+            name="email"
+            label="邮箱"
+            placeholder="请输入邮箱"
+            rules={[{ type: 'email' }]}
+          />
           <ProFormSelect
             width="md"
             options={[
               {
-                value: 0,
+                value: 'MALE',
                 label: '男',
               },
               {
-                value: 1,
+                value: 'FEMALE',
                 label: '女',
+              },
+              {
+                value: 'UNKNOWN',
+                label: '未知',
               },
             ]}
             name="sex"
             label="性别"
           />
-          <ProFormSelect
-            width="md"
-            options={[
-              {
-                value: 0,
-                label: '正常',
-              },
-              {
-                value: 1,
-                label: '禁用',
-              },
-            ]}
-            name="enabled"
-            label="状态"
-          />
 
           <ProFormSelect
             width="md"
             options={[
               {
-                value: '1',
-                label: '类型1',
+                value: 'ADMIN',
+                label: '管理员',
               },
               {
-                value: '2',
-                label: '类型2',
-              },
-              {
-                value: '3',
-                label: '类型3',
+                value: 'NORMAL',
+                label: '用户',
               },
             ]}
-            name="type"
-            label="类型"
+            name="userType"
+            label="用户类型"
           />
         </ModalForm>
-
-        {/*--------修改更新------------*/}
-        {/*<UpdateForm*/}
-        {/*  onSubmit={async (value) => {*/}
-        {/*    const success = await handleUpdate(value);*/}
-        {/*    if (success) {*/}
-        {/*      handleUpdateModalOpen(false);*/}
-        {/*      setCurrentRow(undefined);*/}
-        {/*      if (actionRef.current) {*/}
-        {/*        await actionRef.current.reload();*/}
-        {/*      }*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*  onCancel={() => {*/}
-        {/*    handleUpdateModalOpen(false);*/}
-        {/*    if (!showDetail) {*/}
-        {/*      setCurrentRow(undefined);*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*  updateModalOpen={updateModalOpen}*/}
-        {/*  values={currentRow || {}}*/}
-        {/*/>*/}
 
         <Drawer
           width={600}

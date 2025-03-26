@@ -14,16 +14,28 @@ export default {
   // 访问后端的请求都以/server/api/开头，这样不会请求本地的代理接口，
   // 请求会被代理到后端
   dev: {
+    '/api/': {
+      target: 'http://localhost:8000',
+      changeOrigin: true,
+    },
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/server/api/': {
       // 要代理的地址
-      target: 'http://7mc9xf.natappfree.cc',
-      // target: 'http://192.168.0.184:9000',
+      target: 'http://localhost:6501',
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
       secure: false,
       pathRewrite: { '^/server/api': '' },
+    },
+    '/oidc/': {
+      // 要代理的地址
+      target: 'http://vjzf7r.natappfree.cc',
+      // 配置了这个可以从 http 代理到 https
+      // 依赖 origin 的功能可能需要这个，比如 cookie
+      changeOrigin: true,
+      secure: false,
+      pathRewrite: { '^/oidc': '' },
     },
   },
   // fix: {
@@ -48,7 +60,7 @@ export default {
   test: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api/': {
-      target: '',
+      target: 'https://proapi.azurewebsites.net',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },

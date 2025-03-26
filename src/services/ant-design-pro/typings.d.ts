@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 declare namespace API {
-  type CurrentUser = {
+  type CurrentUser = API.UserListItem & {
     name?: string;
     avatar?: string;
     userid?: string;
@@ -53,18 +53,6 @@ declare namespace API {
     data?: RuleListItem[];
     /** 列表的内容总数 */
     total?: number;
-    success?: boolean;
-  };
-
-  type Page<T> = {
-    data: T[];
-    /** 列表的内容总数 */
-    total: number;
-    success?: boolean;
-  };
-
-  type Result<T> = {
-    data: T;
     success?: boolean;
   };
 

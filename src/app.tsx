@@ -6,11 +6,12 @@ import { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
 import React from 'react';
-const isDev = process.env.NODE_ENV === 'development';
-const loginPath = '/User/login';
+import { signinRedirect } from '@/services/ant-design-pro/auth';
+// import { queryCurrentUser } from '@/services/system/User/api';
+import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
 
+const isDev = process.env.NODE_ENV === 'development';
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
@@ -20,6 +21,31 @@ export async function getInitialState(): Promise<{
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
+  const loginPath = '/User/login';
+
+  // const fetchUserInfo = async () => {
+  //   try {
+  //     let user;
+  //     if (history.location.pathname === signinRedirectCallbackPath) {
+  //       user = await signinRedirectCallback();
+  //     } else {
+  //       user = await getUser();
+  //     }
+  //
+  //     console.log('getUser', user);
+  //     if (user) {
+  //       localStorage.setItem('token', user.access_token);
+  //     }
+  //     let { data: userInfo } = await queryCurrentUser();
+  //     userInfo.name = userInfo.nickname;
+  //     return userInfo;
+  //   } catch (error) {
+  //     console.log('error:', error);
+  //     signinRedirect();
+  //   }
+  //   return undefined;
+  // };
+
   const fetchUserInfo = async () => {
     try {
       const msg = await queryCurrentUser({
@@ -31,6 +57,8 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
+
+  // let currentUser = await fetchUserInfo();
   // 如果不是登录页面，执行
   const { location } = history;
   if (location.pathname !== loginPath) {
@@ -45,6 +73,21 @@ export async function getInitialState(): Promise<{
     fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>,
   };
+  // if (currentUser) {
+  //   history.push('/');
+  //   console.log('currentUser', currentUser);
+  //   return {
+  //     fetchUserInfo,
+  //     currentUser,
+  //     settings: defaultSettings as Partial<LayoutSettings>,
+  //   };
+  // }
+  // console.log('error');
+  // history.push('401');
+  // return {
+  //   fetchUserInfo,
+  //   settings: defaultSettings as Partial<LayoutSettings>,
+  // };
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
@@ -52,21 +95,20 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
     avatarProps: {
-      src: initialState?.currentUser?.avatar,
+      src: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
       title: <AvatarName />,
       render: (_, avatarChildren) => {
         return <AvatarDropdown>{avatarChildren}</AvatarDropdown>;
       },
     },
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.nickname,
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
-        history.push(loginPath);
+      if (!initialState?.currentUser) {
+        signinRedirect();
       }
     },
     bgLayoutImgList: [
@@ -98,6 +140,34 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         ]
       : [],
     menuHeaderRender: undefined,
+    // menu: {
+    //   request: async () => {
+    //     const IconMap = {
+    //       smile: <SmileOutlined />,
+    //       heart: <HeartOutlined />,
+    //       crown: <CrownOutlined />,
+    //     };
+    //     const menuList: MenuDataItem[] = [];
+    //     const menuData = initialState?.currentUser?.menuList;
+    //     if (menuData) {
+    //       menuData.forEach((item) => {
+    //         let menu: MenuDataItem = {
+    //           path: item.path,
+    //           name: item.name,
+    //           icon: item.icon && IconMap[item.icon as 'smile'],
+    //           key: item.id + '',
+    //           locale: false,
+    //           type: item.type,
+    //           id: item.id,
+    //           parentId: item.parentId,
+    //         };
+    //         menuList.push(menu);
+    //       });
+    //       return treeify(menuList, {});
+    //     }
+    //     return menuList;
+    //   },
+    // },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态

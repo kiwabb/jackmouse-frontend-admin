@@ -3,6 +3,7 @@
 
 declare namespace API {
   type SysMenu = {
+    checked: boolean;
     /**
      * 主键
      */
@@ -16,7 +17,7 @@ declare namespace API {
      * 是否隐藏
      */
     hidden: boolean;
-
+    icon: string;
     /**
      * 菜单名称
      */
@@ -28,7 +29,7 @@ declare namespace API {
     /**
      * 菜单访问路径
      */
-    path?: null | string;
+    path?: string;
     /**
      * 排序
      */
@@ -42,5 +43,10 @@ declare namespace API {
     createBy?: number | null;
     createTime?: null | string;
     children?: Menu[];
+  };
+
+  type AssignMenu = {
+    roleId?: number;
+    menuIds: (number | string | bigint)[];
   };
 }

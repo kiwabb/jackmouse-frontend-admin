@@ -12,19 +12,21 @@ import {
 import { Button, Form, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { addRole, deleteRole, oneRole, role, updateRole } from '@/services/system/Role/api';
+import AssignMenu from '@/pages/system/Role/components/AssignMenu';
+import AssignUser from '@/pages/system/Role/components/AssignUser';
 
 const TableList: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [openNewRole, setOpenNewRole] = useState<boolean>(false);
-  const [currentRow, setCurrentRow] = useState<API.SysRoleItem>({});
-  const [showDetail, setShowDetail] = useState(false);
+  const [currentRow, setCurrentRow] = useState<API.SysRoleItem>();
   const [openEditRole, setOpenEditRole] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(showDetail);
-  // useEffect(() => {
-  //   form.setFieldsValue(currentRow);
-  // }, [form, currentRow]);
+  const [menuRoleId, setMenuRoleId] = useState<number>();
+  const [userRoleId, setUserRoleId] = useState<number>();
+
+  const [assignMenu, setAssignMenu] = useState<boolean>(false);
+  const [assignUser, setAssignUser] = useState<boolean>(false);
 
   const handleAddRole = async (file: API.SysRoleItem) => {
     const hide = message.loading('正在添加');
@@ -55,7 +57,6 @@ const TableList: React.FC = () => {
   const handleRoleEdit = async (record: API.SysRoleItem) => {
     try {
       await updateRole({
-        id: (currentRow as API.SysRoleItem).id,
         ...record,
       });
       message.success('修改成功');
@@ -86,18 +87,6 @@ const TableList: React.FC = () => {
       //接口字段名
       dataIndex: 'name',
       tip: '角色名是独一无二的',
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
     },
     {
       title: (
@@ -108,11 +97,12 @@ const TableList: React.FC = () => {
       ),
       //search: true,只有不需要展示的时候需要写search：false
       //接口字段名
+      hideInSearch: true,
       dataIndex: 'dataScope',
       tip: '数据权限范围',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.system.Role.code" defaultMessage="角色code" />,
+      title: <FormattedMessage id="pages.searchTable.system.Role.code" defaultMessage="角色编码" />,
 
       //接口字段名
       dataIndex: 'code',
@@ -125,7 +115,6 @@ const TableList: React.FC = () => {
       ////search: true,只有不需要展示的时候需要写search：false只有不需要展示的时候需要写search：false
       //接口字段名
       dataIndex: 'enabled',
-      tip: '数据权限范围',
       valueEnum: {
         true: {
           text: <FormattedMessage id="pages.searchTable.system.Role.able" defaultMessage="启用" />,
@@ -143,9 +132,10 @@ const TableList: React.FC = () => {
       title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
       valueType: 'option',
+      key: 'option',
       render: (_, record) => [
         <a
-          key={record.id}
+          key={'edit-' + record.id}
           onClick={() => {
             setOpenEditRole(true);
             oneRole(record.id).then((res) => {
@@ -160,7 +150,7 @@ const TableList: React.FC = () => {
         <Popconfirm
           onConfirm={handleRoleDelete}
           // onCancel={() => setOpen(false)}
-          key={record.id}
+          key={'delete-' + record.id}
           placement="topLeft"
           title={'删除'}
           // open={open}
@@ -170,7 +160,6 @@ const TableList: React.FC = () => {
           okButtonProps={{ loading: loading }}
         >
           <a
-            key="id"
             onClick={() => {
               setCurrentRow(record);
               // setOpen(true);
@@ -179,6 +168,24 @@ const TableList: React.FC = () => {
             <FormattedMessage id="pages.searchTable.deletion" defaultMessage="deletion" />
           </a>
         </Popconfirm>,
+        <a
+          key={'assignMenu-' + record.id}
+          onClick={() => {
+            setMenuRoleId(record.id);
+            setAssignMenu(true);
+          }}
+        >
+          <FormattedMessage id="pages.searchTable.assignMenu" defaultMessage="分配菜单" />
+        </a>,
+        <a
+          key={'assignUser-' + record.id}
+          onClick={() => {
+            setUserRoleId(record.id);
+            setAssignUser(true);
+          }}
+        >
+          <FormattedMessage id="pages.searchTable.assignUser" defaultMessage="分配角色" />
+        </a>,
       ],
     },
   ];
@@ -219,7 +226,7 @@ const TableList: React.FC = () => {
         }}
         onFinish={async (record) => {
           console.log(record);
-          const success = await handleAddRole(record);
+          const success = await handleAddRole(record as API.SysRoleItem);
           if (success) {
             setOpenNewRole(false);
             if (actionRef.current) {
@@ -274,11 +281,9 @@ const TableList: React.FC = () => {
         width="400px"
         modalProps={{
           destroyOnClose: true,
-          onCancel: () => console.log('关闭弹窗'),
         }}
         onFinish={async (record: API.SysRoleItem) => {
-          console.log(record);
-          await handleRoleEdit(record);
+          await handleRoleEdit({ ...currentRow, ...record });
         }}
       >
         <ProFormText
@@ -314,6 +319,8 @@ const TableList: React.FC = () => {
           ]}
         />
       </ModalForm>
+      <AssignMenu open={assignMenu} onOpenChange={setAssignMenu} roleId={menuRoleId} />
+      <AssignUser open={assignUser} onOpenChange={setAssignUser} roleId={userRoleId} />
     </PageContainer>
   );
 };
