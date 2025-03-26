@@ -17,7 +17,7 @@ export default {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/server/api/': {
       // 要代理的地址
-      target: 'http://uwg3hw.natappfree.cc',
+      target: 'http://7mc9xf.natappfree.cc',
       // target: 'http://192.168.0.184:9000',
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
@@ -48,7 +48,7 @@ export default {
   test: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api/': {
-      target: 'https://proapi.azurewebsites.net',
+      target: '',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },

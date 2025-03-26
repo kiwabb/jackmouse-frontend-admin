@@ -109,6 +109,21 @@ export default [
         name: 'Product',
         component: './ims/Product',
       },
+      {
+        path: '/ims/purchase',
+        name: 'Purchase',
+        component: './ims/Purchase',
+      },
+      {
+        path: '/ims/sell',
+        name: 'Sell',
+        component: './ims/Sell',
+      },
+      {
+        path: '/ims/transactions',
+        name: 'Transaction',
+        component: './ims/Transaction',
+      },
     ],
   },
   {
