@@ -55,17 +55,14 @@ export async function menuTypeOne(options?: Record<string, any>) {
 }
 
 export async function getMenuByRoleId(id?: number, options?: Record<string, any>) {
-  return await request<API.Result<API.SysMenu[]>>(
-    `/server/api/basic-system/sysMenu/getMenuByRoleId/${id}`,
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
+  return await request<API.Result<API.SysMenu[]>>(`/server/api/admin/menu/bindRole/${id}`, {
+    method: 'GET',
+    ...(options || {}),
+  });
 }
 
 export async function assignMenu(assignMenu: API.AssignMenu, options?: { [key: string]: any }) {
-  return await request<API.Result<API.SysMenu[]>>(`/server/api/basic-system/sysMenu/assignMenu`, {
+  return await request<API.Result<API.SysMenu[]>>(`/server/api/admin/role/assignMenu`, {
     method: 'POST',
     data: assignMenu,
     ...(options || {}),

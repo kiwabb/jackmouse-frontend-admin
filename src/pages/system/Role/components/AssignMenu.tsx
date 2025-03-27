@@ -59,7 +59,6 @@ const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) =
       title={'分配菜单'}
       open={open}
       onCancel={() => {
-        setTreeData([]);
         setCheckedKeys([]);
         onOpenChange(false);
       }}
