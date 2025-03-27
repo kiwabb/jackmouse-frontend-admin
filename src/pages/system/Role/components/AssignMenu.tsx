@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { assignMenu, getMenuByRoleId } from '@/services/system/Menu/api';
 import { message, Modal, Tree, TreeDataNode, TreeProps } from 'antd';
 import { treeify } from '@/utils/treeify';
+import MenuList from '@/pages/system/Menu/components/MenuList';
 
 type AssignAuthProps = {
   roleId: number | undefined;
@@ -72,7 +73,11 @@ const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) =
         checkedKeys={checkedKeys}
         onCheck={onCheck}
       ></Tree>
+
+      <MenuList />
     </Modal>
+
+    // -----
   );
 };
 

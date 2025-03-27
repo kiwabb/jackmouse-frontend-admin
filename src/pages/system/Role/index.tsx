@@ -175,7 +175,7 @@ const TableList: React.FC = () => {
             setAssignMenu(true);
           }}
         >
-          <FormattedMessage id="pages.searchTable.assignMenu" defaultMessage="分配菜单" />
+          <FormattedMessage id="pages.searchTable.assignMenu" defaultMessage="配置菜单" />
         </a>,
         <a
           key={'assignUser-' + record.id}
@@ -184,7 +184,7 @@ const TableList: React.FC = () => {
             setAssignUser(true);
           }}
         >
-          <FormattedMessage id="pages.searchTable.assignUser" defaultMessage="分配角色" />
+          <FormattedMessage id="pages.searchTable.assignUser" defaultMessage="分配用户" />
         </a>,
       ],
     },
@@ -320,6 +320,7 @@ const TableList: React.FC = () => {
         />
       </ModalForm>
       <AssignMenu open={assignMenu} onOpenChange={setAssignMenu} roleId={menuRoleId} />
+
       <AssignUser open={assignUser} onOpenChange={setAssignUser} roleId={userRoleId} />
     </PageContainer>
   );
