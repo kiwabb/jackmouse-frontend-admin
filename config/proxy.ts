@@ -38,6 +38,20 @@ export default {
       pathRewrite: { '^/oidc': '' },
     },
   },
+  // fix: {
+  //   // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
+  //   '/ims/api/': {
+  //     // 要代理的地址
+  //     target: 'http://t5sqq8.natappfree.cc/ims',
+  //     // target: 'http://192.168.0.184:9000',
+  //     // 配置了这个可以从 http 代理到 https
+  //     // 依赖 origin 的功能可能需要这个，比如 cookie
+  //     changeOrigin: true,
+  //     secure: false,
+  //     pathRewrite: { '^/ims/api': '' },
+  //   },
+  //
+  // },
 
   /**
    * @name 详细的代理配置
