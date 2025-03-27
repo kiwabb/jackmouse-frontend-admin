@@ -64,7 +64,7 @@ export default {
   'pages.searchTable.system.newRole': '新建角色',
   ' pages.searchTable.system.Role.dataScope': '权限范围',
   'pages.searchTable.system.Role.enabled': '是否启用',
-  'pages.searchTable.system.Role.code': '角色code',
+  'pages.searchTable.system.Role.code': '角色编码',
   'pages.searchTable.system.Role.able': '启用',
   'pages.searchTable.system.Role.unable': '禁用',
   // -----------------------------------------------------------

@@ -1,16 +1,11 @@
-import {
-  FolderOpenOutlined,
-  MenuOutlined,
-  PlusOutlined,
-  ProfileOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { FolderOpenOutlined, MenuOutlined, PlusOutlined, ProfileOutlined } from '@ant-design/icons';
 import {
   ActionType,
   ProColumns,
   ProDescriptionsItemProps,
   ProFormDigit,
   ProFormRadio,
+  ProFormSelect,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
 import {
@@ -18,7 +13,6 @@ import {
   PageContainer,
   ProDescriptions,
   ProFormText,
-  ProFormTextArea,
   ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
@@ -336,7 +330,11 @@ const TableList: React.FC = () => {
           id: 'pages.searchTable.createForm.newMenu',
           defaultMessage: '新建规则',
         })}
-        width="400px"
+        layout={'horizontal'}
+        labelCol={{ span: 6 }} // 标签占6列宽度
+        wrapperCol={{ span: 18 }} // 内容区占18列
+        grid={true}
+        rowProps={{ gutter: 24 }}
         open={createModalOpen}
         onOpenChange={handleModalOpen}
         modalProps={{
@@ -355,6 +353,7 @@ const TableList: React.FC = () => {
         }}
       >
         <ProFormTreeSelect
+          colProps={{ span: 12 }}
           label={'上级菜单'}
           name={'parentId'}
           width={'md'}
@@ -372,7 +371,6 @@ const TableList: React.FC = () => {
                 key: -1,
               };
               treeData.unshift(root);
-              console.log('treeData', treeData);
               return treeData;
             }
             return [];
@@ -385,9 +383,8 @@ const TableList: React.FC = () => {
           }}
         />
         <ProFormText
+          colProps={{ span: 12 }}
           fieldProps={{
-            size: 'large',
-            prefix: <UserOutlined />,
             showCount: true,
             maxLength: 20,
           }}
@@ -397,15 +394,29 @@ const TableList: React.FC = () => {
               message: '菜单名称不能为空',
             },
           ]}
-          width={'md'}
           name={'name'}
           label={'菜单名称'}
           placeholder={'请输入菜单名称'}
         />
-        <ProFormText width="md" name="componentName" label="组件名称" placeholder="输入组件名称" />
-        <ProFormText width="md" name="component" label="组件地址" placeholder="输入组件地址" />
+        <ProFormText
+          colProps={{ span: 12 }}
+          name="componentName"
+          label="组件名称"
+          placeholder="输入组件名称"
+        />
+        <ProFormText
+          colProps={{ span: 12 }}
+          name="component"
+          label="组件地址"
+          placeholder="输入组件地址"
+        />
 
-        <ProFormText width="md" name="path" label="路由地址" placeholder="输入路由地址" />
+        <ProFormText
+          colProps={{ span: 12 }}
+          name="path"
+          label="路由地址"
+          placeholder="输入路由地址"
+        />
         <ProFormText
           rules={[
             {
@@ -413,16 +424,15 @@ const TableList: React.FC = () => {
               message: '菜单图标不为空',
             },
           ]}
-          width="md"
+          colProps={{ span: 12 }}
           name="icon"
           label="菜单图标"
           placeholder="输入菜单图标"
         />
-        <ProFormTextArea width="md" name="desc" />
         <ProFormRadio.Group
           name="hidden"
           label="是否隐藏"
-          width="lg"
+          colProps={{ span: 12 }}
           initialValue={false}
           options={[
             {
@@ -436,27 +446,33 @@ const TableList: React.FC = () => {
           ]}
           rules={[{ required: true, message: '选择是否隐藏' }]}
         />
-        <ProFormRadio.Group
-          name="type"
-          label="是否为目录"
-          width="lg"
-          initialValue={1}
+        <ProFormSelect
+          colProps={{ span: 12 }}
           options={[
             {
-              label: '是',
-              value: 1,
+              value: 'SYSTEM_CATALOG',
+              label: '系统菜单',
             },
             {
-              label: '否',
-              value: 2,
+              value: 'BUSINESS_MENU',
+              label: '目录',
+            },
+            {
+              value: 'API_RESOURCE',
+              label: '资源',
+            },
+            {
+              value: 'BUTTON',
+              label: '按钮',
             },
           ]}
-          rules={[{ required: true, message: '选择是否为目录' }]}
+          name="type"
+          label="类型"
         />
         <ProFormDigit
           label="排序号"
           name="sort"
-          width="md"
+          colProps={{ span: 12 }}
           min={1}
           fieldProps={{ precision: 0 }}
           rules={[{ required: true, message: '选择排序号' }]}

@@ -33,27 +33,24 @@ export async function menu(
   },
   options?: { [key: string]: any },
 ) {
-  const { data } = await request<API.PageResult<API.SysMenu>>(
-    '/server/api/basic-system/sysMenu/list',
-    {
-      method: 'GET',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
+  const { data } = await request<API.PageResult<API.SysMenu>>('/server/api/admin/menu/page', {
+    method: 'GET',
+    params: {
+      ...params,
     },
-  );
+    ...(options || {}),
+  });
   return data;
 }
 
 export async function menuTypeOne(options?: Record<string, any>) {
-  const { data } = await request<API.PageResult<API.SysMenu>>(
-    `/server/api/basic-system/sysMenu/menuTypeOne`,
-    {
-      method: 'GET',
-      ...(options || {}),
+  const { data } = await request<API.PageResult<API.SysMenu>>(`/server/api/admin/menu/type`, {
+    method: 'GET',
+    params: {
+      type: 'SYSTEM_CATALOG',
     },
-  );
+    ...(options || {}),
+  });
   return data;
 }
 
@@ -75,20 +72,17 @@ export async function assignMenu(assignMenu: API.AssignMenu, options?: { [key: s
   });
 }
 export async function menuById(id: number, options?: { [key: string]: any }) {
-  const { data } = await request<API.Result<API.SysMenu>>(
-    `/server/api/basic-system/sysMenu/getInfo/${id}`,
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
+  const { data } = await request<API.Result<API.SysMenu>>(`/server/api/admin/menu/${id}`, {
+    method: 'GET',
+    ...(options || {}),
+  });
   return data;
 }
 // --------------------
 
 /** 更新规则 PUT /api/User */
 export async function updateMenu(data?: { [key: string]: any }) {
-  return request<API.UserListItem>('/server/api/basic-system/sysMenu/update', {
+  return request<API.UserListItem>('/server/api/admin/menu', {
     method: 'PUT',
     data,
   });
@@ -96,7 +90,7 @@ export async function updateMenu(data?: { [key: string]: any }) {
 
 /** 新建规则 POST /api/User */
 export async function addMenu(options?: { [key: string]: any }) {
-  return request<API.SysMenu>('/server/api/basic-system/sysMenu/save', {
+  return request<API.SysMenu>('/server/api/admin/menu', {
     method: 'POST',
     data: {
       method: 'post',
@@ -107,8 +101,11 @@ export async function addMenu(options?: { [key: string]: any }) {
 
 /** 删除规则 DELETE /api/rule */
 export async function removeMenu(id: number, options?: Record<string, any>) {
-  return request<Record<string, any>>(`/server/api/basic-system/sysMenu/remove/${id}`, {
+  return request<Record<string, any>>(`/server/api/admin/menu`, {
     method: 'DELETE',
+    data: {
+      ids: [id],
+    },
     ...(options || {}),
   });
 }

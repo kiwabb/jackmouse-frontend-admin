@@ -252,7 +252,7 @@ const TableList: React.FC = () => {
         <ProFormText
           width="md"
           name="code"
-          label="角色code"
+          label="角色编码"
           tooltip="最长为 24 位"
           placeholder="请输入数据范围"
         />
@@ -304,7 +304,7 @@ const TableList: React.FC = () => {
         <ProFormText
           width="md"
           name="code"
-          label="角色code"
+          label="角色编码"
           tooltip="最长为 24 位"
           placeholder="请输入数据范围"
         />

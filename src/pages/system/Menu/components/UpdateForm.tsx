@@ -3,6 +3,7 @@ import {
   ProForm,
   ProFormDigit,
   ProFormRadio,
+  ProFormSelect,
   ProFormText,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
@@ -123,22 +124,28 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           ]}
           rules={[{ required: true, message: '选择是否隐藏' }]}
         />
-        <ProFormRadio.Group
-          name="type"
-          label="是否为目录"
-          width="lg"
-          initialValue={1}
+        <ProFormSelect
+          colProps={{ span: 12 }}
           options={[
             {
-              label: '是',
-              value: 1,
+              value: 'SYSTEM_CATALOG',
+              label: '系统菜单',
             },
             {
-              label: '否',
-              value: 2,
+              value: 'BUSINESS_MENU',
+              label: '目录',
+            },
+            {
+              value: 'API_RESOURCE',
+              label: '资源',
+            },
+            {
+              value: 'BUTTON',
+              label: '按钮',
             },
           ]}
-          rules={[{ required: true, message: '选择是否为目录' }]}
+          name="type"
+          label="类型"
         />
         <ProFormDigit
           label="排序号"
