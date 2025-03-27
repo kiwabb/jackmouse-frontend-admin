@@ -65,16 +65,13 @@ export async function selectUnAssignUser(
   },
   options?: { [key: string]: any },
 ) {
-  return await request<API.PageResult<API.UserListItem>>(
-    `/server/api/basic-system/sysUser/getUnAssignUser`,
-    {
-      method: 'GET',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
+  return await request<API.PageResult<API.UserListItem>>(`/server/api/admin/user/getUnAssignUser`, {
+    method: 'GET',
+    params: {
+      ...params,
     },
-  );
+    ...(options || {}),
+  });
 }
 
 /** 获取已分配角色userid 的用户列表  */
@@ -88,20 +85,17 @@ export async function selectAssignUser(
   },
   options?: { [key: string]: any },
 ) {
-  return await request<API.PageResult<API.UserListItem>>(
-    `/server/api/basic-system/sysUser/getAssignUser`,
-    {
-      method: 'GET',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
+  return await request<API.PageResult<API.UserListItem>>(`/server/api/admin/user/getAssignUser`, {
+    method: 'GET',
+    params: {
+      ...params,
     },
-  );
+    ...(options || {}),
+  });
 }
 
 export async function assignUser(assignMenu: API.AssignUser, options?: { [key: string]: any }) {
-  return await request<API.Result<API.SysMenu[]>>(`/server/api/basic-system/sysUser/assignUser`, {
+  return await request<API.Result<API.SysMenu[]>>(`/server/api/admin/role/assignUser`, {
     method: 'POST',
     data: assignMenu,
     ...(options || {}),

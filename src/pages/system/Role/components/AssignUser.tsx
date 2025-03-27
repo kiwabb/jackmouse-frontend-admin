@@ -129,7 +129,13 @@ const AssignUser: React.FC<any> = ({ open, onOpenChange, roleId }) => {
   };
 
   return (
-    <Modal title={'分配角色'} width={1200} open={open} onCancel={() => onOpenChange(false)}>
+    <Modal
+      title={'分配角色'}
+      width={1200}
+      open={open}
+      onOk={() => onOpenChange(false)}
+      onCancel={() => onOpenChange(false)}
+    >
       <Row gutter={16}>
         <Col>
           <Form.Item name="employeeName" label="用户姓名左">
