@@ -20,7 +20,7 @@ const AssignUser: React.FC<any> = ({ open, onOpenChange, roleId }) => {
   useEffect(() => {
     actionAssignRef.current?.reload();
     actionUnAssignRef.current?.reload();
-  }, [roleId]);
+  }, [open]);
 
   // 左侧主表格列
   const mainColumns: ProColumns<API.UserListItem>[] = [
@@ -129,7 +129,13 @@ const AssignUser: React.FC<any> = ({ open, onOpenChange, roleId }) => {
   };
 
   return (
-    <Modal title={'分配角色'} width={1200} open={open} onCancel={() => onOpenChange(false)}>
+    <Modal
+      title={'分配角色'}
+      width={1200}
+      open={open}
+      onOk={() => onOpenChange(false)}
+      onCancel={() => onOpenChange(false)}
+    >
       <Row gutter={16}>
         <Col>
           <Form.Item name="employeeName" label="用户姓名左">
@@ -215,11 +221,14 @@ const AssignUser: React.FC<any> = ({ open, onOpenChange, roleId }) => {
             rowKey="id"
             rowSelection={rowAssignSelection}
             request={async (params) => {
-              if (usernameRight) {
-                params.nickname = usernameRight;
+              if (open && roleId) {
+                if (usernameRight) {
+                  params.nickname = usernameRight;
+                }
+                params.roleId = roleId;
+                return selectAssignUser(params);
               }
-              params.roleId = roleId;
-              return selectAssignUser(params);
+              return {};
             }}
           />
         </Col>

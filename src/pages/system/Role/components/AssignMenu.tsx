@@ -28,7 +28,7 @@ const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId, rol
       }
     };
     getRoleMenus();
-  }, [roleId]);
+  }, [open]);
   const onCheck: TreeProps['onCheck'] = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
     setCheckedKeys(checkedKeysValue as number[]);
