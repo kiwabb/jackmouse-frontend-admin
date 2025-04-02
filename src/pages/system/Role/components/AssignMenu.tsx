@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { assignMenu, getMenuByRoleId } from '@/services/system/Menu/api';
 import { message, Modal, Tree, TreeDataNode, TreeProps } from 'antd';
 import { treeify } from '@/utils/treeify';
-import MenuList from '@/pages/system/Menu/components/MenuList';
 
 type AssignAuthProps = {
   roleId: number | undefined;
+  roleName: string | undefined;
   open: boolean;
   onOpenChange: (value: ((prevState: boolean) => boolean) | boolean) => void;
 };
 
-const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) => {
+const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId, roleName }) => {
   const [treeData, setTreeData] = useState<TreeDataNode[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<(number | string | bigint)[]>([]);
+
   useEffect(() => {
     const getRoleMenus = async () => {
       if (roleId) {
@@ -39,6 +40,8 @@ const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) =
       hide();
       if (result.success) {
         message.success('权限分配成功');
+
+        onOpenChange(false);
         return true;
       } else {
         message.error(result.errorMessage);
@@ -57,7 +60,7 @@ const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) =
 
   return (
     <Modal
-      title={'分配菜单'}
+      title={`${roleName}角色`}
       open={open}
       onCancel={() => {
         setCheckedKeys([]);
@@ -73,7 +76,7 @@ const AssignMenu: React.FC<AssignAuthProps> = ({ open, onOpenChange, roleId }) =
         onCheck={onCheck}
       ></Tree>
 
-      <MenuList />
+      {/*<MenuList />*/}
     </Modal>
 
     // -----

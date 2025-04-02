@@ -11,7 +11,7 @@ declare namespace API {
     /**
      * 角色名
      */
-    name?: null | string;
+    name?: string;
     /**
      * 数据权限范围配置
      */

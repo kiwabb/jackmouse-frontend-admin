@@ -138,6 +138,7 @@ const TableList: React.FC = () => {
           key={'edit-' + record.id}
           onClick={() => {
             setOpenEditRole(true);
+            setCurrentRow(record);
             oneRole(record.id).then((res) => {
               setCurrentRow(res);
               handleRoleOpen(record);
@@ -171,6 +172,7 @@ const TableList: React.FC = () => {
         <a
           key={'assignMenu-' + record.id}
           onClick={() => {
+            setCurrentRow(record);
             setMenuRoleId(record.id);
             setAssignMenu(true);
           }}
@@ -319,9 +321,30 @@ const TableList: React.FC = () => {
           ]}
         />
       </ModalForm>
-      <AssignMenu open={assignMenu} onOpenChange={setAssignMenu} roleId={menuRoleId} />
+      <AssignMenu
+        open={assignMenu}
+        onOpenChange={(newOpen) => {
+          setAssignMenu(newOpen);
+          if (!newOpen) {
+            // 当 newOpen 为 false 时触发
+            setMenuRoleId(0);
+          }
+        }}
+        roleId={menuRoleId}
+        roleName={currentRow?.name}
+      />
 
-      <AssignUser open={assignUser} onOpenChange={setAssignUser} roleId={userRoleId} />
+      <AssignUser
+        open={assignUser}
+        onOpenChange={(newOpen: boolean) => {
+          setAssignUser(newOpen);
+          if (!newOpen) {
+            // 当 newOpen 为 false 时触发
+            setUserRoleId(0);
+          }
+        }}
+        roleId={userRoleId}
+      />
     </PageContainer>
   );
 };
